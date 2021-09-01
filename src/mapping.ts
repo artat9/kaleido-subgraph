@@ -7,6 +7,7 @@ import {
   Close,
   Deny,
   NewPost,
+  Propose,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
 
@@ -43,6 +44,14 @@ export function handleCall(event: Call): void {
 export function handleDeny(event: Deny): void {
   // TODO: bookedBidIds ?
   updateBidStatus(toId(event.params.bidId), "DENIED");
+}
+
+export function handlePropose(event: Propose): void {
+  let bid = loadBidder(toId(event.params.bidId));
+  bid.metadata = event.params.metadata;
+  bid.originalLink = event.params.originalLink;
+  bid.save();
+  updateBidStatus(toId(event.params.bidId), "PROPOSED");
 }
 
 export function handleClose(event: Close): void {
