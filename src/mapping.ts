@@ -1,6 +1,12 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 
-import { Accept, Bid, Call, NewPost } from "./generated/AdManager/AdManager";
+import {
+  Accept,
+  Bid,
+  Call,
+  Close,
+  NewPost,
+} from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
 
 export function handleNewPost(event: NewPost): void {
@@ -31,6 +37,14 @@ export function handleAccept(event: Accept): void {
 
 export function handleCall(event: Call): void {
   updateBidStatus(toId(event.params.bidId), "CALLED");
+}
+
+export function handleClose(event: Close): void {
+  // TODO: difference between Accept and Close
+  let post = loadPost(toId(event.params.postId));
+  post.successfulBid = toId(event.params.bitId);
+  post.save();
+  updateBidStatus(toId(event.params.bitId), "CLOSE");
 }
 
 function updateBidStatus(id: string, after: string): void {
