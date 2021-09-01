@@ -8,6 +8,7 @@ import {
   Deny,
   NewPost,
   Propose,
+  Refund,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
 
@@ -44,6 +45,10 @@ export function handleCall(event: Call): void {
 export function handleDeny(event: Deny): void {
   // TODO: bookedBidIds ?
   updateBidStatus(toId(event.params.bidId), "DENIED");
+}
+
+export function handleRefund(event: Refund): void {
+  updateBidStatus(toId(event.params.bitId), "REFUNDED");
 }
 
 export function handlePropose(event: Propose): void {
