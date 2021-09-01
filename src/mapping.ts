@@ -9,6 +9,7 @@ import {
   NewPost,
   Propose,
   Refund,
+  UpdateMetadata,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
 
@@ -49,6 +50,12 @@ export function handleDeny(event: Deny): void {
 
 export function handleRefund(event: Refund): void {
   updateBidStatus(toId(event.params.bitId), "REFUNDED");
+}
+
+export function handleUpdateMetadata(event: UpdateMetadata): void {
+  let post = loadPost(toId(event.params.postId));
+  post.metadata = event.params.metadata;
+  post.save();
 }
 
 export function handlePropose(event: Propose): void {
