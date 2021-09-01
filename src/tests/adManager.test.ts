@@ -1,11 +1,23 @@
-import { Accept, Bid, Call, NewPost } from "./../generated/AdManager/AdManager";
+import {
+  Accept,
+  Bid,
+  Call,
+  Deny,
+  NewPost,
+} from "./../generated/AdManager/AdManager";
 import {
   clearStore,
   test,
   assert,
   newMockEvent,
 } from "matchstick-as/assembly/index";
-import { handleAccept, handleBid, handleCall, handleNewPost } from "../mapping";
+import {
+  handleAccept,
+  handleBid,
+  handleCall,
+  handleDeny,
+  handleNewPost,
+} from "../mapping";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
 export function runTests(): void {
@@ -13,6 +25,20 @@ export function runTests(): void {
   testHandleBid();
   testHandleAccept();
   testHandleCall();
+}
+
+function testHandleDeny(): void {
+  test("bid status should be changed to DENIED", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    deny_(mockDeny(postId, id));
+    assert.fieldEquals("Bidder", id.toHexString(), "status", "DENIED");
+    clearStore();
+  });
 }
 
 function testHandleAccept(): void {
@@ -263,6 +289,21 @@ function mockAccept(postId: BigInt, bidId: BigInt): Accept {
   let bidIdParam = idParam_(bidId);
   accept.parameters.push(postIdParam);
   accept.parameters.push(bidIdParam);
+  return accept;
+}
+
+function deny_(deny: Deny): void {
+  let acceptEvent = newMockEvent(deny) as Deny;
+  handleDeny(acceptEvent);
+}
+
+function mockDeny(postId: BigInt, bidId: BigInt): Deny {
+  let accept = new Deny();
+  accept.parameters = new Array();
+  let bidIdParam = idParam_(bidId);
+  let postIdParam = idParam_(postId);
+  accept.parameters.push(bidIdParam);
+  accept.parameters.push(postIdParam);
   return accept;
 }
 
