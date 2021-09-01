@@ -1,16 +1,28 @@
 type PostContent @entity {
   id: ID!
+  owner: Bytes!
   metadata: String!
-  donee: Bytes!
-  capacity: Int!
-  periodHours: Int!
-  startTime: Int!
-  endTime: Int!
-  donatedCount: Int!
-  donatedSum: BigInt!
-  withdrawn: Boolean!
-  donations: [Donation!] @derivedFrom(field: "donated")
-  cancelled: [Donation!] @derivedFrom(field: "cancelled")
-  refundRequested: [Donation!] @derivedFrom(field: "refundRequested")
-  refunded: [Donation!] @derivedFrom(field: "refunded")
+  metadataIndex: Int!
+  fromTimestamp: Int!
+  toTimestamp: Int!
+  successfulBid: Bidder
+}
+
+type Bidder @entity {
+  id: ID!
+  post: PostContent!
+  sender: Bytes!
+  price: BigInt!
+  metadata: String
+  originalLink: String
+  status: DraftStatus!
+}
+
+enum DraftStatus {
+  LISTED
+  CALLED
+  PROPOSED
+  DENIED
+  ACCEPTED
+  REFUNDED
 }

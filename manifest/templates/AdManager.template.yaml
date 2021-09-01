@@ -3,7 +3,7 @@
   network: "{{network}}"
   source:
     address: "{{address}}"
-    startBlock: { { startBlock } }
+    startBlock: {{startBlock}}
     abi: AdManager
   mapping:
     kind: ethereum/events
@@ -15,6 +15,6 @@
       - name: AdManager
         file: ./kaleido-core/abi/contracts/AdManager.sol/AdManager.json
     eventHandlers:
-      - event: NewPost(uint256,uint256,uint256,address,uint256,string)
+      - event: NewPost(uint256,address,string,uint8,uint256,uint256)
         handler: handleNewPost
     file: ./src/mapping.ts
