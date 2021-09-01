@@ -1,0 +1,20 @@
+- kind: ethereum/contract
+  name: AdManager
+  network: "{{network}}"
+  source:
+    address: "{{address}}"
+    startBlock: { { startBlock } }
+    abi: AdManager
+  mapping:
+    kind: ethereum/events
+    apiVersion: 0.0.4
+    language: wasm/assemblyscript
+    entities:
+      - PostContent
+    abis:
+      - name: AdManager
+        file: ./kaleido-core/abi/contracts/AdManager.sol/AdManager.json
+    eventHandlers:
+      - event: NewPost(uint256,uint256,uint256,address,uint256,string)
+        handler: handleNewPost
+    file: ./src/mapping.ts

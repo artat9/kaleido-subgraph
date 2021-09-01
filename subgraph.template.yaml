@@ -1,0 +1,8 @@
+# To edit subgraph.template.yaml, run `yarn manifest-<network>`
+specVersion: 0.0.2
+description: kaleido-core
+repository: https://github.com/bridges-inc/kaleido-core
+schema:
+  file: ./schema.graphql
+dataSources:
+{{> AdManager.template.yaml}}

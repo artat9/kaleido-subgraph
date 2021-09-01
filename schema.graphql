@@ -1,0 +1,16 @@
+type PostContent @entity {
+  id: ID!
+  metadata: String!
+  donee: Bytes!
+  capacity: Int!
+  periodHours: Int!
+  startTime: Int!
+  endTime: Int!
+  donatedCount: Int!
+  donatedSum: BigInt!
+  withdrawn: Boolean!
+  donations: [Donation!] @derivedFrom(field: "donated")
+  cancelled: [Donation!] @derivedFrom(field: "cancelled")
+  refundRequested: [Donation!] @derivedFrom(field: "refundRequested")
+  refunded: [Donation!] @derivedFrom(field: "refunded")
+}
