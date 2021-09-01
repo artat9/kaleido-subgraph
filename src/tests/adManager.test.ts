@@ -1,15 +1,125 @@
-import { NewPost } from "./../generated/AdManager/AdManager";
+import { Bid, NewPost } from "./../generated/AdManager/AdManager";
 import {
   clearStore,
   test,
   assert,
   newMockEvent,
 } from "matchstick-as/assembly/index";
-import { handleNewPost } from "../mapping";
+import { handleBid, handleNewPost } from "../mapping";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
 export function runTests(): void {
   testHandleNewPost();
+  testHandleBid();
+}
+
+function testHandleBid(): void {
+  test("test ont handleBid", () => {
+    test("bid id should be id hex string", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          meta_(),
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+      assert.fieldEquals("Bidder", id.toHexString(), "id", id.toHexString());
+      clearStore();
+    });
+    test("bid metadata should be as it is", () => {
+      let postId = new BigInt(3);
+      let metadata = "metadata";
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          metadata,
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      bid_(mockNewBid(id, postId, address_(), new BigInt(1), metadata, "link"));
+      assert.fieldEquals("Bidder", id.toHexString(), "metadata", metadata);
+      clearStore();
+    });
+    test("originalLink should be as it is", () => {
+      let postId = new BigInt(3);
+      let originalLink = "https://yahoo.com";
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          "metadata",
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      bid_(
+        mockNewBid(
+          id,
+          postId,
+          address_(),
+          new BigInt(1),
+          "metadata",
+          originalLink
+        )
+      );
+      assert.fieldEquals(
+        "Bidder",
+        id.toHexString(),
+        "originalLink",
+        originalLink
+      );
+      clearStore();
+    });
+    test("price should be as it is", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          "metadata",
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      let price = new BigInt(100000000);
+      bid_(mockNewBid(id, postId, address_(), price, "metadata", "link"));
+      assert.fieldEquals("Bidder", id.toHexString(), "price", price.toString());
+      clearStore();
+    });
+    test("status should be LISTED on bid", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          "metadata",
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      bid_(
+        mockNewBid(id, postId, address_(), new BigInt(1), "metadata", "link")
+      );
+      assert.fieldEquals("Bidder", id.toHexString(), "status", "LISTED");
+      clearStore();
+    });
+  });
 }
 
 function testHandleNewPost(): void {
@@ -105,6 +215,43 @@ function newPost_(post: NewPost): void {
   let newPostEvent = newMockEvent(post) as NewPost;
   handleNewPost(newPostEvent);
 }
+
+function bid_(bid: Bid): void {
+  let newbidEvent = newMockEvent(bid) as Bid;
+  handleBid(newbidEvent);
+}
+
+function mockNewBid(
+  id: BigInt,
+  postId: BigInt,
+  sender: Address,
+  price: BigInt,
+  metadata: string,
+  originalLink: string
+): Bid {
+  let bid = new Bid();
+  bid.parameters = new Array();
+  let idParam = new ethereum.EventParam();
+  idParam.value = ethereum.Value.fromUnsignedBigInt(id);
+  let postIdParam = new ethereum.EventParam();
+  postIdParam.value = ethereum.Value.fromUnsignedBigInt(postId);
+  let senderParam = new ethereum.EventParam();
+  senderParam.value = ethereum.Value.fromAddress(sender);
+  let priceParam = new ethereum.EventParam();
+  priceParam.value = ethereum.Value.fromUnsignedBigInt(price);
+  let metadataParam = new ethereum.EventParam();
+  metadataParam.value = ethereum.Value.fromString(metadata);
+  let originalLinkParam = new ethereum.EventParam();
+  originalLinkParam.value = ethereum.Value.fromString(originalLink);
+  bid.parameters.push(idParam);
+  bid.parameters.push(postIdParam);
+  bid.parameters.push(senderParam);
+  bid.parameters.push(priceParam);
+  bid.parameters.push(metadataParam);
+  bid.parameters.push(originalLinkParam);
+  return bid;
+}
+
 function mockNewPost(
   id: BigInt,
   owner: Address,
