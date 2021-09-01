@@ -5,6 +5,7 @@ import {
   Bid,
   Call,
   Close,
+  Deny,
   NewPost,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
@@ -37,6 +38,11 @@ export function handleAccept(event: Accept): void {
 
 export function handleCall(event: Call): void {
   updateBidStatus(toId(event.params.bidId), "CALLED");
+}
+
+export function handleDeny(event: Deny): void {
+  // TODO: bookedBidIds ?
+  updateBidStatus(toId(event.params.bidId), "DENIED");
 }
 
 export function handleClose(event: Close): void {
