@@ -14,5 +14,5 @@
     "resolveJsonModule": true,
     "sourceMap": true
   },
-  "include": ["./src/*.ts", "./typechain", "src/newPost.ts.org"]
+  "include": ["./src/*.ts", "./typechain"]
 }
