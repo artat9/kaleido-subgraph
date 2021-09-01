@@ -31,6 +31,4 @@
         handler: handlePropose
       - event: Refund(uint256,uint256,address,uint256)
         handler: handleRefund
-      - event: UpdateMetadata(uint256,string)
-        handler: handleUpdateMetadata
     file: ./src/mapping.ts
