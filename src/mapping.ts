@@ -12,10 +12,12 @@ import {
   UpdateMetadata,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
+export { runTests } from "./tests/adManager.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
   post.metadata = event.params.metadata;
+  post.owner = event.params.owner;
   post.metadataIndex = event.params.metadataIndex;
   post.fromTimestamp = event.params.fromTimestamp.toI32();
   post.toTimestamp = event.params.toTimestamp.toI32();

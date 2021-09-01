@@ -1,6 +1,7 @@
 {
   "scripts": {
     "gen": "graph codegen -o src/generated && yarn typechain --target web3-v1 app/contracts './kaleido-core/abi/contracts/*.sol/*.json' --out-dir src/generated",
+    "test": "graph build && ./matchstick AdManager",
     "local": "graph create kaleido/kaleido --node http://127.0.0.1:8020",
     "deploy:local": "graph deploy -l v0.0.1 kaleido/kaleido subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "deploy:contracts:local": "cd kaleido-core && npx hardhat deploy --network ganache",
@@ -21,11 +22,9 @@
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@typechain/web3-v1": "^3.0.0",
-    "@types/chai": "^4.2.21",
-    "@types/jest": "^26.0.24",
-    "@types/mocha": "^8.2.3",
     "@types/node": "^16.3.3",
     "apollo-client": "^2.6.10",
+    "assemblyscript": "^0.19.11",
     "chai": "^4.3.4",
     "dotenv": "^10.0.0",
     "eslint": "^7.31.0",
@@ -42,19 +41,20 @@
     "hardhat-deploy": "^0.8.11",
     "hardhat-deploy-ethers": "^0.3.0-beta.10",
     "hardhat-gas-reporter": "^1.0.4",
-    "jest": "^27.0.6",
     "prettier": "^2.3.2",
     "prettier-plugin-solidity": "^1.0.0-beta.16",
     "solhint": "^3.3.6",
     "solhint-plugin-prettier": "^0.0.5",
-    "ts-jest": "^27.0.4",
     "ts-node": "^10.1.0",
     "typechain": "^5.1.2",
     "typechain-target-web3-v1": "^1.0.4",
     "typescript": "^4.3.5"
   },
   "dependencies": {
+    "@assemblyscript/loader": "^0.19.11",
     "@openzeppelin/contracts": "^4.2.0",
+    "assemblyscript": "git+https://github.com/AssemblyScript/assemblyscript.git#v0.6",
+    "matchstick-as": "^0.0.49",
     "mustache": "^4.2.0"
   }
 }

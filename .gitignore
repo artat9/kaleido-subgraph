@@ -5,3 +5,4 @@ build/
 generated/
 dist/
 subgraph.yaml
+matchstick
