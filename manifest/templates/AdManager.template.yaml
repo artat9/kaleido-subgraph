@@ -17,4 +17,20 @@
     eventHandlers:
       - event: NewPost(uint256,address,string,uint8,uint256,uint256)
         handler: handleNewPost
+      - event: Accept(uint256,uint256)
+        handler: handleAccept
+      - event: Bid(uint256,uint256,address,uint256,string,string)
+        handler: handleBid
+      - event: Call(uint256,uint256,address,uint256)
+        handler: handleCall
+      - event: Close(uint256,uint256,address,uint256,string)
+        handler: handleClose
+      - event: Deny(uint256,uint256)
+        handler: handleDeny
+      - event: Propose(uint256,uint256,string,string)
+        handler: handlePropose
+      - event: Refund(uint256,uint256,address,uint256)
+        handler: handleRefund
+      - event: UpdateMetadata(uint256,string)
+        handler: handleUpdateMetadata
     file: ./src/mapping.ts
