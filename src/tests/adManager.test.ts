@@ -4,6 +4,7 @@ import {
   Call,
   Deny,
   NewPost,
+  Refund,
 } from "./../generated/AdManager/AdManager";
 import {
   clearStore,
@@ -17,6 +18,7 @@ import {
   handleCall,
   handleDeny,
   handleNewPost,
+  handleRefund,
 } from "../mapping";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
@@ -25,6 +27,22 @@ export function runTests(): void {
   testHandleBid();
   testHandleAccept();
   testHandleCall();
+  testHandleDeny();
+  testHandleRefund();
+}
+
+function testHandleRefund(): void {
+  test("bid status should be changed to REFUNDED", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    refund_(mockRefund(postId, id, address_(), new BigInt(0)));
+    assert.fieldEquals("Bidder", id.toHexString(), "status", "REFUNDED");
+    clearStore();
+  });
 }
 
 function testHandleDeny(): void {
@@ -290,6 +308,30 @@ function mockAccept(postId: BigInt, bidId: BigInt): Accept {
   accept.parameters.push(postIdParam);
   accept.parameters.push(bidIdParam);
   return accept;
+}
+
+function refund_(refund: Refund): void {
+  let refundEvent = newMockEvent(refund) as Refund;
+  handleRefund(refundEvent);
+}
+
+function mockRefund(
+  bidId: BigInt,
+  postId: BigInt,
+  sender: Address,
+  price: BigInt
+): Refund {
+  let refund = new Refund();
+  refund.parameters = new Array();
+  let bidIdParam = idParam_(bidId);
+  let postIdParam = idParam_(postId);
+  let senderParam = addressParam_(sender);
+  let priceParam = bigIntParam_(price);
+  refund.parameters.push(bidIdParam);
+  refund.parameters.push(postIdParam);
+  refund.parameters.push(senderParam);
+  refund.parameters.push(priceParam);
+  return refund;
 }
 
 function deny_(deny: Deny): void {
