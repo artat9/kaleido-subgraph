@@ -1,6 +1,6 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 
-import { Bid, NewPost } from "./generated/AdManager/AdManager";
+import { Accept, Bid, NewPost } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
 
 export function handleNewPost(event: NewPost): void {
@@ -20,6 +20,23 @@ export function handleBid(event: Bid): void {
   bidder.price = event.params.price;
   bidder.status = "LISTED";
   bidder.save();
+}
+
+export function handleAccept(event: Accept): void {
+  let post = loadPost(toId(event.params.postId));
+  post.successfulBid = toId(event.params.bidId);
+  post.save();
+  let bidder = loadBidder(toId(event.params.bidId));
+  bidder.status = "ACCEPTED";
+  bidder.save();
+}
+
+function loadBidder(id: string): Bidder {
+  return Bidder.load(id)!!;
+}
+
+function loadPost(id: string): PostContent {
+  return PostContent.load(id)!!;
 }
 
 let toId = (postId: BigInt): string => {
