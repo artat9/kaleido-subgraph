@@ -2,6 +2,7 @@ import {
   Accept,
   Bid,
   Call,
+  Close,
   Deny,
   NewPost,
   Refund,
@@ -16,6 +17,7 @@ import {
   handleAccept,
   handleBid,
   handleCall,
+  handleClose,
   handleDeny,
   handleNewPost,
   handleRefund,
@@ -29,6 +31,7 @@ export function runTests(): void {
   testHandleCall();
   testHandleDeny();
   testHandleRefund();
+  testHandleClosed();
 }
 
 function testHandleRefund(): void {
@@ -68,6 +71,20 @@ function testHandleAccept(): void {
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
     accept_(mockAccept(postId, id));
+    assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
+    clearStore();
+  });
+}
+
+function testHandleClosed(): void {
+  test("on close, bid status should be changed to ACCEPTED", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    close_(mockClose(id, postId, address_(), new BigInt(1), meta_()));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
     clearStore();
   });
@@ -415,6 +432,33 @@ function i32Param_(val: i32): ethereum.EventParam {
   let p = new ethereum.EventParam();
   p.value = ethereum.Value.fromI32(val);
   return p;
+}
+
+function close_(close: Close): void {
+  let closeEvent = newMockEvent(close) as Close;
+  handleClose(closeEvent);
+}
+
+function mockClose(
+  id: BigInt,
+  postId: BigInt,
+  sender: Address,
+  price: BigInt,
+  metadata: string
+): Close {
+  let close = new Close();
+  close.parameters = new Array();
+  let idParam = idParam_(id);
+  let postIdParam = idParam_(postId);
+  let senderParam = addressParam_(sender);
+  let priceParam = bigIntParam_(price);
+  let metaParam = strParam_(metadata);
+  close.parameters.push(idParam);
+  close.parameters.push(postIdParam);
+  close.parameters.push(senderParam);
+  close.parameters.push(priceParam);
+  close.parameters.push(metaParam);
+  return close;
 }
 
 function mockNewBid(

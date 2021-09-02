@@ -67,7 +67,7 @@ export function handleClose(event: Close): void {
   let post = loadPost(toId(event.params.postId));
   post.successfulBid = toId(event.params.bitId);
   post.save();
-  updateBidStatus(toId(event.params.bitId), "CLOSE");
+  updateBidStatus(toId(event.params.bitId), "ACCEPTED");
 }
 
 function updateBidStatus(id: string, after: string): void {
