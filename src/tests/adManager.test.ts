@@ -193,6 +193,22 @@ function testHandleBid(): void {
       assert.fieldEquals("Bidder", id.toHexString(), "status", "LISTED");
       clearStore();
     });
+    test("sender should be as it is", () => {
+      let postId = new BigInt(3);
+      let sender = address_();
+      newPost_(
+        mockNewPost(postId, sender, "metadata", 1, new BigInt(1), new BigInt(1))
+      );
+      let id = new BigInt(1);
+      bid_(mockNewBid(id, postId, sender, new BigInt(1), "metadata", "link"));
+      assert.fieldEquals(
+        "Bidder",
+        id.toHexString(),
+        "sender",
+        sender.toHexString()
+      );
+      clearStore();
+    });
   });
 }
 

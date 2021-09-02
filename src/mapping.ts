@@ -30,6 +30,7 @@ export function handleBid(event: Bid): void {
   bidder.originalLink = event.params.originalLink;
   bidder.price = event.params.price;
   bidder.status = "LISTED";
+  bidder.sender = event.params.sender;
   bidder.save();
 }
 
