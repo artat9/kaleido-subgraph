@@ -11,7 +11,7 @@ import {
   Refund,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
-export { runTests } from "./tests/adManager.test";
+//export { runTests } from "./tests/adManager.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
