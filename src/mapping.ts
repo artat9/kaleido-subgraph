@@ -27,7 +27,6 @@ export function handleBid(event: Bid): void {
   let bidder = new Bidder(toId(event.params.bidId));
   bidder.post = toId(event.params.postId);
   bidder.metadata = event.params.metadata;
-  bidder.originalLink = event.params.originalLink;
   bidder.price = event.params.price;
   bidder.status = "LISTED";
   bidder.sender = event.params.sender;
@@ -65,7 +64,6 @@ export function handleRefund(event: Refund): void {
 export function handlePropose(event: Propose): void {
   let bid = loadBidder(toId(event.params.bidId));
   bid.metadata = event.params.metadata;
-  bid.originalLink = event.params.originalLink;
   bid.save();
   updateBidStatus(toId(event.params.bidId), "PROPOSED");
 }

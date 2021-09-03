@@ -19,15 +19,17 @@
         handler: handleNewPost
       - event: Accept(uint256,uint256)
         handler: handleAccept
-      - event: Bid(uint256,uint256,address,uint256,string,string)
+      - event: Bid(uint256,uint256,address,uint256,string)
         handler: handleBid
+      - event: Book(uint256,uint256,address,uint256)
+        handler: handleBook
       - event: Call(uint256,uint256,address,uint256)
         handler: handleCall
       - event: Close(uint256,uint256,address,uint256,string)
         handler: handleClose
       - event: Deny(uint256,uint256)
         handler: handleDeny
-      - event: Propose(uint256,uint256,string,string)
+      - event: Propose(uint256,uint256,string)
         handler: handlePropose
       - event: Refund(uint256,uint256,address,uint256)
         handler: handleRefund

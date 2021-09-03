@@ -14,7 +14,6 @@ type Bidder @entity {
   sender: Bytes!
   price: BigInt!
   metadata: String
-  originalLink: String
   status: DraftStatus!
 }
 
