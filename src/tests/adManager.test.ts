@@ -1,6 +1,7 @@
 import {
   Accept,
   Bid,
+  Book,
   Call,
   Close,
   Deny,
@@ -16,6 +17,7 @@ import {
 import {
   handleAccept,
   handleBid,
+  handleBook,
   handleCall,
   handleClose,
   handleDeny,
@@ -42,7 +44,7 @@ function testHandleRefund(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     refund_(mockRefund(postId, id, address_(), new BigInt(0)));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "REFUNDED");
     clearStore();
@@ -56,7 +58,7 @@ function testHandleDeny(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     deny_(mockDeny(postId, id));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "DENIED");
     clearStore();
@@ -70,7 +72,7 @@ function testHandleAccept(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     accept_(mockAccept(postId, id));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
     clearStore();
@@ -84,7 +86,7 @@ function testHandleClosed(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     close_(mockClose(id, postId, address_(), new BigInt(1), meta_()));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
     clearStore();
@@ -98,7 +100,7 @@ function testHandleCall(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     call_(mockCall(id, postId, address_(), new BigInt(0)));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "CALLED");
     clearStore();
@@ -109,7 +111,7 @@ function testHandleCall(): void {
       mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
-    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     call_(mockCall(id, postId, address_(), new BigInt(0)));
     let post = loadPost(postId.toHexString());
     let got = ethereum.Value.fromString(post.successfulBid!!);
@@ -134,7 +136,7 @@ function testHandleBid(): void {
         )
       );
       let id = new BigInt(1);
-      bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+      bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
       assert.fieldEquals("Bidder", id.toHexString(), "id", id.toHexString());
       clearStore();
     });
@@ -152,40 +154,8 @@ function testHandleBid(): void {
         )
       );
       let id = new BigInt(1);
-      bid_(mockNewBid(id, postId, address_(), new BigInt(1), metadata, "link"));
+      bid_(mockNewBid(id, postId, address_(), new BigInt(1), metadata));
       assert.fieldEquals("Bidder", id.toHexString(), "metadata", metadata);
-      clearStore();
-    });
-    test("originalLink should be as it is", () => {
-      let postId = new BigInt(3);
-      let originalLink = "https://yahoo.com";
-      newPost_(
-        mockNewPost(
-          postId,
-          address_(),
-          "metadata",
-          1,
-          new BigInt(1),
-          new BigInt(1)
-        )
-      );
-      let id = new BigInt(1);
-      bid_(
-        mockNewBid(
-          id,
-          postId,
-          address_(),
-          new BigInt(1),
-          "metadata",
-          originalLink
-        )
-      );
-      assert.fieldEquals(
-        "Bidder",
-        id.toHexString(),
-        "originalLink",
-        originalLink
-      );
       clearStore();
     });
     test("price should be as it is", () => {
@@ -202,7 +172,7 @@ function testHandleBid(): void {
       );
       let id = new BigInt(1);
       let price = new BigInt(100000000);
-      bid_(mockNewBid(id, postId, address_(), price, "metadata", "link"));
+      bid_(mockNewBid(id, postId, address_(), price, "metadata"));
       assert.fieldEquals("Bidder", id.toHexString(), "price", price.toString());
       clearStore();
     });
@@ -219,9 +189,7 @@ function testHandleBid(): void {
         )
       );
       let id = new BigInt(1);
-      bid_(
-        mockNewBid(id, postId, address_(), new BigInt(1), "metadata", "link")
-      );
+      bid_(mockNewBid(id, postId, address_(), new BigInt(1), "metadata"));
       assert.fieldEquals("Bidder", id.toHexString(), "status", "LISTED");
       clearStore();
     });
@@ -232,7 +200,98 @@ function testHandleBid(): void {
         mockNewPost(postId, sender, "metadata", 1, new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
-      bid_(mockNewBid(id, postId, sender, new BigInt(1), "metadata", "link"));
+      bid_(mockNewBid(id, postId, sender, new BigInt(1), "metadata"));
+      assert.fieldEquals(
+        "Bidder",
+        id.toHexString(),
+        "sender",
+        sender.toHexString()
+      );
+      clearStore();
+    });
+  });
+}
+
+function testHandleBook(): void {
+  test("test ont handleBook", () => {
+    test("bid id should be id hex string on book", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          meta_(),
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      _book(mockNewBook(id, postId, address_(), new BigInt(1)));
+      assert.fieldEquals("Bidder", id.toHexString(), "id", id.toHexString());
+      clearStore();
+    });
+    test("bid metadata should be empty string on book", () => {
+      let postId = new BigInt(3);
+      let metadata = "metadata";
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          metadata,
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      _book(mockNewBook(id, postId, address_(), new BigInt(1)));
+      assert.fieldEquals("Bidder", id.toHexString(), "metadata", "");
+      clearStore();
+    });
+    test("price should be as it is on book", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          "metadata",
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      let price = new BigInt(100000000);
+      _book(mockNewBook(id, postId, address_(), price));
+      assert.fieldEquals("Bidder", id.toHexString(), "price", price.toString());
+      clearStore();
+    });
+    test("status should be BOOKED on book", () => {
+      let postId = new BigInt(3);
+      newPost_(
+        mockNewPost(
+          postId,
+          address_(),
+          "metadata",
+          1,
+          new BigInt(1),
+          new BigInt(1)
+        )
+      );
+      let id = new BigInt(1);
+      _book(mockNewBook(id, postId, address_(), new BigInt(1)));
+      assert.fieldEquals("Bidder", id.toHexString(), "status", "BOOKED");
+      clearStore();
+    });
+    test("sender should be as it is on book", () => {
+      let postId = new BigInt(3);
+      let sender = address_();
+      newPost_(
+        mockNewPost(postId, sender, "metadata", 1, new BigInt(1), new BigInt(1))
+      );
+      let id = new BigInt(1);
+      _book(mockNewBook(id, postId, sender, new BigInt(1)));
       assert.fieldEquals(
         "Bidder",
         id.toHexString(),
@@ -476,13 +535,36 @@ function mockClose(
   return close;
 }
 
+function _book(book: Book): void {
+  let bookEvent = newMockEvent(book) as Book;
+  handleBook(bookEvent);
+}
+
+function mockNewBook(
+  id: BigInt,
+  postId: BigInt,
+  sender: Address,
+  price: BigInt
+): Bid {
+  let bid = new Bid();
+  bid.parameters = new Array();
+  let idParam = idParam_(id);
+  let postIdParam = idParam_(postId);
+  let senderParam = addressParam_(sender);
+  let priceParam = bigIntParam_(price);
+  bid.parameters.push(idParam);
+  bid.parameters.push(postIdParam);
+  bid.parameters.push(senderParam);
+  bid.parameters.push(priceParam);
+  return bid;
+}
+
 function mockNewBid(
   id: BigInt,
   postId: BigInt,
   sender: Address,
   price: BigInt,
-  metadata: string,
-  originalLink: string
+  metadata: string
 ): Bid {
   let bid = new Bid();
   bid.parameters = new Array();
@@ -491,13 +573,11 @@ function mockNewBid(
   let senderParam = addressParam_(sender);
   let priceParam = bigIntParam_(price);
   let metadataParam = strParam_(metadata);
-  let originalLinkParam = strParam_(originalLink);
   bid.parameters.push(idParam);
   bid.parameters.push(postIdParam);
   bid.parameters.push(senderParam);
   bid.parameters.push(priceParam);
   bid.parameters.push(metadataParam);
-  bid.parameters.push(originalLinkParam);
   return bid;
 }
 

@@ -1,8 +1,9 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 import {
   Accept,
   Bid,
+  Book,
   Call,
   Close,
   Deny,
@@ -11,7 +12,7 @@ import {
   Refund,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
-//export { runTests } from "./tests/adManager.test";
+export { runTests } from "./tests/adManager.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
@@ -24,12 +25,41 @@ export function handleNewPost(event: NewPost): void {
 }
 
 export function handleBid(event: Bid): void {
-  let bidder = new Bidder(toId(event.params.bidId));
-  bidder.post = toId(event.params.postId);
-  bidder.metadata = event.params.metadata;
-  bidder.price = event.params.price;
-  bidder.status = "LISTED";
-  bidder.sender = event.params.sender;
+  handleNewBidder(
+    event.params.postId,
+    event.params.bidId,
+    event.params.metadata,
+    event.params.price,
+    "LISTED",
+    event.params.sender
+  );
+}
+
+export function handleBook(event: Book): void {
+  handleNewBidder(
+    event.params.postId,
+    event.params.bidId,
+    "",
+    event.params.price,
+    "BOOKED",
+    event.params.sender
+  );
+}
+
+function handleNewBidder(
+  postId: BigInt,
+  bidId: BigInt,
+  metadata: string,
+  price: BigInt,
+  status: string,
+  sender: Address
+): void {
+  let bidder = new Bidder(toId(bidId));
+  bidder.post = toId(postId);
+  bidder.metadata = metadata;
+  bidder.price = price;
+  bidder.status = status;
+  bidder.sender = sender;
   bidder.save();
 }
 
