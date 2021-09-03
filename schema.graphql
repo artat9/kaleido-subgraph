@@ -18,6 +18,7 @@ type Bidder @entity {
 }
 
 enum DraftStatus {
+  BOOKED
   LISTED
   CALLED
   PROPOSED
