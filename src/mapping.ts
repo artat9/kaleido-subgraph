@@ -35,14 +35,22 @@ export function handleBid(event: Bid): void {
 }
 
 export function handleAccept(event: Accept): void {
-  let post = loadPost(toId(event.params.postId));
-  post.successfulBid = toId(event.params.bidId);
+  handleSuccessful(event.params.postId, event.params.bidId, "ACCEPTED");
+}
+
+function handleSuccessful(
+  postId: BigInt,
+  bidId: BigInt,
+  statusAfter: string
+): void {
+  let post = loadPost(toId(postId));
+  post.successfulBid = toId(bidId);
   post.save();
-  updateBidStatus(toId(event.params.bidId), "ACCEPTED");
+  updateBidStatus(toId(bidId), statusAfter);
 }
 
 export function handleCall(event: Call): void {
-  updateBidStatus(toId(event.params.bidId), "CALLED");
+  handleSuccessful(event.params.postId, event.params.bidId, "CALLED");
 }
 
 export function handleDeny(event: Deny): void {
@@ -80,7 +88,7 @@ function loadBidder(id: string): Bidder {
   return Bidder.load(id)!!;
 }
 
-function loadPost(id: string): PostContent {
+export function loadPost(id: string): PostContent {
   return PostContent.load(id)!!;
 }
 

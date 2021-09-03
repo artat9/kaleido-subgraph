@@ -21,6 +21,7 @@ import {
   handleDeny,
   handleNewPost,
   handleRefund,
+  loadPost,
 } from "../mapping";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 
@@ -100,6 +101,20 @@ function testHandleCall(): void {
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
     call_(mockCall(id, postId, address_(), new BigInt(0)));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "CALLED");
+    clearStore();
+  });
+  test("bid succeed when called", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_(), "link"));
+    call_(mockCall(id, postId, address_(), new BigInt(0)));
+    let post = loadPost(postId.toHexString());
+    let got = ethereum.Value.fromString(post.successfulBid!!);
+    let want = ethereum.Value.fromString(postId.toHexString());
+    assert.equals(want, got);
     clearStore();
   });
 }
