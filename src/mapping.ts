@@ -65,11 +65,12 @@ function handleNewBidder(
   bidder.price = price;
   bidder.status = status;
   bidder.sender = sender;
+  bidder.successful = false;
   bidder.save();
 }
 
 export function handleAccept(event: Accept): void {
-  handleSuccessful(event.params.postId, event.params.bidId, "ACCEPTED");
+  updateBidStatus(toId(event.params.bidId), "ACCEPTED");
 }
 
 function handleSuccessful(
@@ -80,6 +81,9 @@ function handleSuccessful(
   let post = loadPost(toId(postId));
   post.successfulBid = toId(bidId);
   post.save();
+  let successfulBid = loadBidder(toId(bidId));
+  successfulBid.successful = true;
+  successfulBid.save();
   updateBidStatus(toId(bidId), statusAfter);
 }
 
@@ -88,7 +92,6 @@ export function handleCall(event: Call): void {
 }
 
 export function handleDeny(event: Deny): void {
-  // TODO: bookedBidIds ?
   updateBidStatus(toId(event.params.bidId), "DENIED");
 }
 
@@ -104,11 +107,7 @@ export function handlePropose(event: Propose): void {
 }
 
 export function handleClose(event: Close): void {
-  // TODO: difference between Accept and Close
-  let post = loadPost(toId(event.params.postId));
-  post.successfulBid = toId(event.params.bitId);
-  post.save();
-  updateBidStatus(toId(event.params.bitId), "ACCEPTED");
+  handleSuccessful(event.params.postId, event.params.bitId, "ACCEPTED");
 }
 
 function updateBidStatus(id: string, after: string): void {

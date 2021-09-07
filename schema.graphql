@@ -18,6 +18,7 @@ type Bidder @entity {
   price: BigInt!
   metadata: String
   status: DraftStatus!
+  successful: Boolean!
 }
 
 enum DraftStatus {

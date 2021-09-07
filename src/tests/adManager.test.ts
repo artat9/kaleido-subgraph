@@ -91,6 +91,17 @@ function testHandleClosed(): void {
     assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
     clearStore();
   });
+  test("on close, bid should be successful", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
+    close_(mockClose(id, postId, address_(), new BigInt(1), meta_()));
+    assert.fieldEquals("Bidder", id.toHexString(), "successful", "true");
+    clearStore();
+  });
 }
 
 function testHandleCall(): void {
@@ -117,6 +128,17 @@ function testHandleCall(): void {
     let got = ethereum.Value.fromString(post.successfulBid!!);
     let want = ethereum.Value.fromString(postId.toHexString());
     assert.equals(want, got);
+    clearStore();
+  });
+  test("on call, bid should be successful", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
+    call_(mockCall(id, postId, address_(), new BigInt(0)));
+    assert.fieldEquals("Bidder", id.toHexString(), "successful", "true");
     clearStore();
   });
 }
@@ -193,6 +215,17 @@ function testHandleBid(): void {
       );
       clearStore();
     });
+    test("successuful should be false", () => {
+      let postId = new BigInt(3);
+      let sender = address_();
+      newPost_(
+        mockNewPost(postId, sender, "metadata", new BigInt(1), new BigInt(1))
+      );
+      let id = new BigInt(1);
+      bid_(mockNewBid(id, postId, sender, new BigInt(1), "metadata"));
+      assert.fieldEquals("Bidder", id.toHexString(), "successful", "false");
+      clearStore();
+    });
   });
 }
 
@@ -266,6 +299,17 @@ function testHandleBook(): void {
         "sender",
         sender.toHexString()
       );
+      clearStore();
+    });
+    test("successuful should be false", () => {
+      let postId = new BigInt(3);
+      let sender = address_();
+      newPost_(
+        mockNewPost(postId, sender, "metadata", new BigInt(1), new BigInt(1))
+      );
+      let id = new BigInt(1);
+      _book(mockNewBook(id, postId, sender, new BigInt(1)));
+      assert.fieldEquals("Bidder", id.toHexString(), "successful", "false");
       clearStore();
     });
   });
