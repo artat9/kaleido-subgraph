@@ -12,13 +12,12 @@ import {
   Refund,
 } from "./generated/AdManager/AdManager";
 import { Bidder, PostContent } from "./generated/schema";
-//export { runTests } from "./tests/adManager.test";
+export { runTests } from "./tests/adManager.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
   post.metadata = event.params.metadata;
   post.owner = event.params.owner;
-  post.metadataIndex = event.params.metadataIndex;
   post.fromTimestamp = event.params.fromTimestamp.toI32();
   post.toTimestamp = event.params.toTimestamp.toI32();
   post.save();
@@ -33,6 +32,9 @@ export function handleBid(event: Bid): void {
     "LISTED",
     event.params.sender
   );
+  let bidder = loadBidder(toId(event.params.bidId));
+  bidder.bidPost = toId(event.params.postId);
+  bidder.save();
 }
 
 export function handleBook(event: Book): void {
@@ -44,6 +46,9 @@ export function handleBook(event: Book): void {
     "BOOKED",
     event.params.sender
   );
+  let bidder = loadBidder(toId(event.params.bidId));
+  bidder.bookedPost = toId(event.params.postId);
+  bidder.save();
 }
 
 function handleNewBidder(

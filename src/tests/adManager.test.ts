@@ -41,7 +41,7 @@ function testHandleRefund(): void {
   test("bid status should be changed to REFUNDED", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -55,7 +55,7 @@ function testHandleDeny(): void {
   test("bid status should be changed to DENIED", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -69,7 +69,7 @@ function testHandleAccept(): void {
   test("bid status should be changed to ACCEPTED", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -83,7 +83,7 @@ function testHandleClosed(): void {
   test("on close, bid status should be changed to ACCEPTED", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -97,7 +97,7 @@ function testHandleCall(): void {
   test("bid status should be changed to CALLED", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -108,7 +108,7 @@ function testHandleCall(): void {
   test("bid succeed when called", () => {
     let postId = new BigInt(3);
     newPost_(
-      mockNewPost(postId, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -126,14 +126,7 @@ function testHandleBid(): void {
     test("bid id should be id hex string", () => {
       let postId = new BigInt(3);
       newPost_(
-        mockNewPost(
-          postId,
-          address_(),
-          meta_(),
-          1,
-          new BigInt(1),
-          new BigInt(1)
-        )
+        mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
@@ -144,14 +137,7 @@ function testHandleBid(): void {
       let postId = new BigInt(3);
       let metadata = "metadata";
       newPost_(
-        mockNewPost(
-          postId,
-          address_(),
-          metadata,
-          1,
-          new BigInt(1),
-          new BigInt(1)
-        )
+        mockNewPost(postId, address_(), metadata, new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       bid_(mockNewBid(id, postId, address_(), new BigInt(1), metadata));
@@ -165,7 +151,6 @@ function testHandleBid(): void {
           postId,
           address_(),
           "metadata",
-          1,
           new BigInt(1),
           new BigInt(1)
         )
@@ -183,7 +168,6 @@ function testHandleBid(): void {
           postId,
           address_(),
           "metadata",
-          1,
           new BigInt(1),
           new BigInt(1)
         )
@@ -197,7 +181,7 @@ function testHandleBid(): void {
       let postId = new BigInt(3);
       let sender = address_();
       newPost_(
-        mockNewPost(postId, sender, "metadata", 1, new BigInt(1), new BigInt(1))
+        mockNewPost(postId, sender, "metadata", new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       bid_(mockNewBid(id, postId, sender, new BigInt(1), "metadata"));
@@ -217,14 +201,7 @@ function testHandleBook(): void {
     test("bid id should be id hex string on book", () => {
       let postId = new BigInt(3);
       newPost_(
-        mockNewPost(
-          postId,
-          address_(),
-          meta_(),
-          1,
-          new BigInt(1),
-          new BigInt(1)
-        )
+        mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       _book(mockNewBook(id, postId, address_(), new BigInt(1)));
@@ -235,14 +212,7 @@ function testHandleBook(): void {
       let postId = new BigInt(3);
       let metadata = "metadata";
       newPost_(
-        mockNewPost(
-          postId,
-          address_(),
-          metadata,
-          1,
-          new BigInt(1),
-          new BigInt(1)
-        )
+        mockNewPost(postId, address_(), metadata, new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       _book(mockNewBook(id, postId, address_(), new BigInt(1)));
@@ -256,7 +226,6 @@ function testHandleBook(): void {
           postId,
           address_(),
           "metadata",
-          1,
           new BigInt(1),
           new BigInt(1)
         )
@@ -274,7 +243,6 @@ function testHandleBook(): void {
           postId,
           address_(),
           "metadata",
-          1,
           new BigInt(1),
           new BigInt(1)
         )
@@ -288,7 +256,7 @@ function testHandleBook(): void {
       let postId = new BigInt(3);
       let sender = address_();
       newPost_(
-        mockNewPost(postId, sender, "metadata", 1, new BigInt(1), new BigInt(1))
+        mockNewPost(postId, sender, "metadata", new BigInt(1), new BigInt(1))
       );
       let id = new BigInt(1);
       _book(mockNewBook(id, postId, sender, new BigInt(1)));
@@ -308,7 +276,7 @@ function testHandleNewPost(): void {
     test("id should be id hex string", () => {
       let id = new BigInt(1);
       newPost_(
-        mockNewPost(id, address_(), meta_(), 1, new BigInt(1), new BigInt(1))
+        mockNewPost(id, address_(), meta_(), new BigInt(1), new BigInt(1))
       );
       assert.fieldEquals(
         "PostContent",
@@ -323,9 +291,7 @@ function testHandleNewPost(): void {
       let address = Address.fromString(
         "0xD149ac01A582e65DBaa3D4ae986A6cf3fd758C1b"
       );
-      newPost_(
-        mockNewPost(id, address, meta_(), 1, new BigInt(1), new BigInt(1))
-      );
+      newPost_(mockNewPost(id, address, meta_(), new BigInt(1), new BigInt(1)));
       assert.fieldEquals(
         "PostContent",
         id.toHexString(),
@@ -339,29 +305,15 @@ function testHandleNewPost(): void {
     let id = new BigInt(1);
     let metadata = "metadata";
     newPost_(
-      mockNewPost(id, address_(), metadata, 1, new BigInt(0), new BigInt(0))
+      mockNewPost(id, address_(), metadata, new BigInt(0), new BigInt(0))
     );
     assert.fieldEquals("PostContent", id.toHexString(), "metadata", metadata);
-    clearStore();
-  });
-  test("metadata idx should be as it is", () => {
-    let id = new BigInt(1);
-    let idx = 1;
-    newPost_(
-      mockNewPost(id, address_(), meta_(), idx, new BigInt(0), new BigInt(0))
-    );
-    assert.fieldEquals(
-      "PostContent",
-      id.toHexString(),
-      "metadataIndex",
-      idx.toString()
-    );
     clearStore();
   });
   test("from timestamp should be as it is", () => {
     let id = new BigInt(1);
     let from = new BigInt(1000);
-    newPost_(mockNewPost(id, address_(), meta_(), 1, from, new BigInt(0)));
+    newPost_(mockNewPost(id, address_(), meta_(), from, new BigInt(0)));
     assert.fieldEquals(
       "PostContent",
       id.toHexString(),
@@ -373,7 +325,7 @@ function testHandleNewPost(): void {
   test("to timestamp should be as it is", () => {
     let id = new BigInt(1);
     let to = new BigInt(1000);
-    newPost_(mockNewPost(id, address_(), meta_(), 1, new BigInt(0), to));
+    newPost_(mockNewPost(id, address_(), meta_(), new BigInt(0), to));
     assert.fieldEquals(
       "PostContent",
       id.toHexString(),
@@ -585,7 +537,6 @@ function mockNewPost(
   id: BigInt,
   owner: Address,
   meta: string,
-  metadataIndex: i32,
   from: BigInt,
   to: BigInt
 ): NewPost {
@@ -594,13 +545,11 @@ function mockNewPost(
   let postIdParam = idParam_(id);
   let ownerParam = addressParam_(owner);
   let metadataParam = strParam_(meta);
-  let metadataIndexParam = i32Param_(metadataIndex);
   let fromTimestampParam = bigIntParam_(from);
   let toTimestammpParam = bigIntParam_(to);
   post.parameters.push(postIdParam);
   post.parameters.push(ownerParam);
   post.parameters.push(metadataParam);
-  post.parameters.push(metadataIndexParam);
   post.parameters.push(fromTimestampParam);
   post.parameters.push(toTimestammpParam);
   return post;

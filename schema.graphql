@@ -2,15 +2,18 @@ type PostContent @entity {
   id: ID!
   owner: Bytes!
   metadata: String!
-  metadataIndex: Int!
   fromTimestamp: Int!
   toTimestamp: Int!
   successfulBid: Bidder
+  bids: [Bidder!] @derivedFrom(field: "bidPost")
+  books: [Bidder!] @derivedFrom(field: "bookedPost")
 }
 
 type Bidder @entity {
   id: ID!
   post: PostContent!
+  bookedPost: PostContent
+  bidPost: PostContent
   sender: Bytes!
   price: BigInt!
   metadata: String
