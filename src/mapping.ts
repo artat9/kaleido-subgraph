@@ -88,6 +88,9 @@ export function handleAccept(event: Accept): void {
   let right = loadRight(toId(event.params.postId));
   right.burned = true;
   right.save();
+  let post = loadPost(toId(event.params.postId));
+  post.advertiser = right.owner;
+  post.save();
 }
 
 function handleSuccessful(
