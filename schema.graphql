@@ -5,7 +5,6 @@ type PostContent @entity {
   fromTimestamp: Int!
   toTimestamp: Int!
   successfulBid: Bidder
-  advertiser: Bytes
   right: DistributionRight
   bids: [Bidder!] @derivedFrom(field: "bidPost")
   books: [Bidder!] @derivedFrom(field: "bookedPost")
