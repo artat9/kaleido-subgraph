@@ -1,6 +1,7 @@
 {
   "network": "mainnet",
   "address": "0x0000000000000000000000000000000000000000",
+  "rightAddress": "0x268C1B60cA6A357B5221D14b49C0EbD197a352B3",
   "startBlock": 8000000,
   "orgName": "Aurora DAO"
 }

@@ -1,3 +1,4 @@
+import { Transfer } from "./generated/DistributionRight/DistributionRight";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
 
 import {
@@ -11,8 +12,8 @@ import {
   Propose,
   Refund,
 } from "./generated/AdManager/AdManager";
-import { Bidder, PostContent } from "./generated/schema";
-export { runTests } from "./tests/adManager.test";
+import { Bidder, DistributionRight, PostContent } from "./generated/schema";
+export { runTests } from "./tests/mapping.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
@@ -21,6 +22,12 @@ export function handleNewPost(event: NewPost): void {
   post.fromTimestamp = event.params.fromTimestamp.toI32();
   post.toTimestamp = event.params.toTimestamp.toI32();
   post.save();
+}
+
+export function handleTransfer(event: Transfer): void {
+  let right = loadRight(toId(event.params.tokenId));
+  right.owner = event.params.to;
+  right.save();
 }
 
 export function handleBid(event: Bid): void {
@@ -71,6 +78,9 @@ function handleNewBidder(
 
 export function handleAccept(event: Accept): void {
   updateBidStatus(toId(event.params.bidId), "ACCEPTED");
+  let right = loadRight(toId(event.params.postId));
+  right.burned = true;
+  right.save();
 }
 
 function handleSuccessful(
@@ -89,6 +99,11 @@ function handleSuccessful(
 
 export function handleCall(event: Call): void {
   handleSuccessful(event.params.postId, event.params.bidId, "CALLED");
+  let right = new DistributionRight(toId(event.params.postId));
+  right.burned = false;
+  right.owner = event.params.sender;
+  right.post = toId(event.params.postId);
+  right.save();
 }
 
 export function handleDeny(event: Deny): void {
@@ -118,6 +133,10 @@ function updateBidStatus(id: string, after: string): void {
 
 function loadBidder(id: string): Bidder {
   return Bidder.load(id)!!;
+}
+
+function loadRight(id: string): DistributionRight {
+  return DistributionRight.load(id)!!;
 }
 
 export function loadPost(id: string): PostContent {

@@ -1,0 +1,20 @@
+- kind: ethereum/contract
+  name: DistributionRight
+  network: "{{network}}"
+  source:
+    address: "{{rightAddress}}"
+    startBlock: {{startBlock}}
+    abi: DistributionRight
+  mapping:
+    kind: ethereum/events
+    apiVersion: 0.0.4
+    language: wasm/assemblyscript
+    entities:
+      - DistributionRight
+    abis:
+      - name: DistributionRight
+        file: ./kaleido-core/abi/contracts/token/DistributionRight.sol/DistributionRight.json
+    eventHandlers:
+      - event: Transfer(indexed address,indexed address,indexed uint256)
+        handler: handleTransfer
+    file: ./src/mapping.ts

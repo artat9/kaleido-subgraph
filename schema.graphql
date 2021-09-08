@@ -21,6 +21,13 @@ type Bidder @entity {
   successful: Boolean!
 }
 
+type DistributionRight @entity {
+  id: ID!
+  owner: Bytes!
+  post: PostContent!
+  burned: Boolean!
+}
+
 enum DraftStatus {
   BOOKED
   LISTED

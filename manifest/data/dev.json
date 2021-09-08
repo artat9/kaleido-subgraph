@@ -1,6 +1,7 @@
 {
   "network": "dev",
   "address": "0x4E3a5323E0F4Adb2c00030595477eCf54DcA9056",
+  "rightAddress": "0x268C1B60cA6A357B5221D14b49C0EbD197a352B3",
   "startBlock": 0,
   "orgName": "kaleido"
 }

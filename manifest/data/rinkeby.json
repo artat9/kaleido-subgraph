@@ -1,6 +1,7 @@
 {
   "network": "rinkeby",
-  "address": "0x7bddCc0Bc81d2D37819301C79165EB39f46c95e3",
+  "address": "0xa17C1648E57Bd14aB2259828BbCC6Faa12673740",
+  "rightAddress": "0x268C1B60cA6A357B5221D14b49C0EbD197a352B3",
   "startBlock": 9217200,
   "orgName": "kaleido"
 }

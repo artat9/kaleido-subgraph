@@ -1,3 +1,4 @@
+import { Transfer } from "../generated/DistributionRight/DistributionRight";
 import {
   Accept,
   Bid,
@@ -7,7 +8,7 @@ import {
   Deny,
   NewPost,
   Refund,
-} from "./../generated/AdManager/AdManager";
+} from "../generated/AdManager/AdManager";
 import {
   clearStore,
   test,
@@ -23,6 +24,7 @@ import {
   handleDeny,
   handleNewPost,
   handleRefund,
+  handleTransfer,
   loadPost,
 } from "../mapping";
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
@@ -35,6 +37,7 @@ export function runTests(): void {
   testHandleDeny();
   testHandleRefund();
   testHandleClosed();
+  testHandleTransfer();
 }
 
 function testHandleRefund(): void {
@@ -73,8 +76,15 @@ function testHandleAccept(): void {
     );
     let id = new BigInt(1);
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
+    call_(mockCall(id, postId, address_(), new BigInt(1)));
     accept_(mockAccept(postId, id));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "ACCEPTED");
+    assert.fieldEquals(
+      "DistributionRight",
+      postId.toHexString(),
+      "burned",
+      "true"
+    );
     clearStore();
   });
 }
@@ -114,6 +124,12 @@ function testHandleCall(): void {
     bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
     call_(mockCall(id, postId, address_(), new BigInt(0)));
     assert.fieldEquals("Bidder", id.toHexString(), "status", "CALLED");
+    assert.fieldEquals(
+      "DistributionRight",
+      id.toHexString(),
+      "burned",
+      "false"
+    );
     clearStore();
   });
   test("bid succeed when called", () => {
@@ -312,6 +328,36 @@ function testHandleBook(): void {
       assert.fieldEquals("Bidder", id.toHexString(), "successful", "false");
       clearStore();
     });
+  });
+}
+
+function testHandleTransfer(): void {
+  test("owner changed on transfer", () => {
+    let postId = new BigInt(3);
+    newPost_(
+      mockNewPost(postId, address_(), meta_(), new BigInt(1), new BigInt(1))
+    );
+    let id = new BigInt(1);
+    bid_(mockNewBid(id, postId, address_(), new BigInt(1), meta_()));
+    call_(mockCall(id, postId, address_(), new BigInt(0)));
+    let to = Address.fromString("0xD149ac01A582e65DBaa3D4ae986A6cf3fd758C1c");
+    let transfer = new Transfer();
+    transfer.parameters = new Array();
+    let fromParam = addressParam_(address_());
+    let toParam = addressParam_(to);
+    let tokenIdParam = idParam_(postId);
+    transfer.parameters.push(fromParam);
+    transfer.parameters.push(toParam);
+    transfer.parameters.push(tokenIdParam);
+    let transferEvent = newMockEvent(transfer) as Transfer;
+    handleTransfer(transferEvent);
+    assert.fieldEquals(
+      "DistributionRight",
+      postId.toHexString(),
+      "owner",
+      to.toHexString()
+    );
+    clearStore();
   });
 }
 

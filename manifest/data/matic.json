@@ -1,6 +1,7 @@
 {
   "network": "matic",
   "address": "0x4516dB20894984Bb1a886B4bE418baf963485F60",
+  "rightAddress": "0x268C1B60cA6A357B5221D14b49C0EbD197a352B3",
   "startBlock": 18403197,
   "orgName": "Aurora DAO"
 }
