@@ -111,6 +111,9 @@ export function handleCall(event: Call): void {
   right.owner = event.params.sender;
   right.post = toId(event.params.postId);
   right.save();
+  let post = loadPost(toId(event.params.postId));
+  post.right = toId(event.params.postId);
+  post.save();
 }
 
 export function handleDeny(event: Deny): void {
