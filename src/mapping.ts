@@ -1,6 +1,6 @@
+import { ADDRESS_ZERO } from "./../kaleido-core/test/utils/address";
 import { Transfer } from "./generated/DistributionRight/DistributionRight";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
-
 import {
   Accept,
   Bid,
@@ -13,7 +13,7 @@ import {
   Refund,
 } from "./generated/AdManager/AdManager";
 import { Bidder, DistributionRight, PostContent } from "./generated/schema";
-export { runTests } from "./tests/mapping.test";
+//export { runTests } from "./tests/mapping.test";
 
 export function handleNewPost(event: NewPost): void {
   let post = new PostContent(toId(event.params.postId));
@@ -25,6 +25,13 @@ export function handleNewPost(event: NewPost): void {
 }
 
 export function handleTransfer(event: Transfer): void {
+  let zero = Address.fromHexString(ADDRESS_ZERO);
+  if (event.params.from == zero) {
+    return;
+  }
+  if (event.params.to == zero) {
+    return;
+  }
   let right = loadRight(toId(event.params.tokenId));
   right.owner = event.params.to;
   right.save();
