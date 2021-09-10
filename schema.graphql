@@ -6,6 +6,7 @@ type PostContent @entity {
   toTimestamp: Int!
   successfulBid: Bidder
   right: DistributionRight
+  inventory: Inventory!
   bids: [Bidder!] @derivedFrom(field: "bidPost")
   books: [Bidder!] @derivedFrom(field: "bookedPost")
 }
@@ -16,10 +17,17 @@ type Bidder @entity {
   bookedPost: PostContent
   bidPost: PostContent
   sender: Bytes!
+  right: DistributionRight
   price: BigInt!
   metadata: String
   status: DraftStatus!
   successful: Boolean!
+}
+
+type Inventory @entity {
+  id: ID!
+  owner: Bytes!
+  posts: [PostContent!] @derivedFrom(field: "inventory")
 }
 
 type DistributionRight @entity {

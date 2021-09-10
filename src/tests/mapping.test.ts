@@ -398,6 +398,31 @@ function testHandleNewPost(): void {
       mockNewPost(id, address_(), metadata, new BigInt(0), new BigInt(0))
     );
     assert.fieldEquals("PostContent", id.toHexString(), "metadata", metadata);
+    assert.fieldEquals("Inventory", metadata, "id", metadata);
+    assert.fieldEquals(
+      "Inventory",
+      metadata,
+      "owner",
+      address_().toHexString()
+    );
+    clearStore();
+  });
+  test("on newPost with duplicated metadata, no error has occured", () => {
+    let id = new BigInt(1);
+    let metadata = "metadata";
+    newPost_(
+      mockNewPost(id, address_(), metadata, new BigInt(0), new BigInt(0))
+    );
+    newPost_(
+      mockNewPost(id, address_(), metadata, new BigInt(0), new BigInt(0))
+    );
+    assert.fieldEquals("Inventory", metadata, "id", metadata);
+    assert.fieldEquals(
+      "Inventory",
+      metadata,
+      "owner",
+      address_().toHexString()
+    );
     clearStore();
   });
   test("from timestamp should be as it is", () => {

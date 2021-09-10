@@ -12,16 +12,33 @@ import {
   Propose,
   Refund,
 } from "./generated/AdManager/AdManager";
-import { Bidder, DistributionRight, PostContent } from "./generated/schema";
+import {
+  Bidder,
+  DistributionRight,
+  Inventory,
+  PostContent,
+} from "./generated/schema";
 //export { runTests } from "./tests/mapping.test";
 
 export function handleNewPost(event: NewPost): void {
+  newInventory(event.params.metadata, event.params.owner);
   let post = new PostContent(toId(event.params.postId));
   post.metadata = event.params.metadata;
   post.owner = event.params.owner;
   post.fromTimestamp = event.params.fromTimestamp.toI32();
   post.toTimestamp = event.params.toTimestamp.toI32();
+  post.inventory = event.params.metadata;
   post.save();
+}
+
+function newInventory(metadata: string, owner: Address): void {
+  let inventory = loadInventory(metadata);
+  if (inventory) {
+    return;
+  }
+  inventory = new Inventory(metadata);
+  inventory.owner = owner;
+  inventory.save();
 }
 
 export function handleTransfer(event: Transfer): void {
@@ -151,6 +168,10 @@ function loadRight(id: string): DistributionRight {
 
 export function loadPost(id: string): PostContent {
   return PostContent.load(id)!!;
+}
+
+export function loadInventory(metadata: string): Inventory | null {
+  return Inventory.load(metadata);
 }
 
 let toId = (postId: BigInt): string => {
