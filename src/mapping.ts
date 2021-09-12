@@ -11,6 +11,7 @@ import {
   NewPost,
   Propose,
   Refund,
+  SuspendPost,
 } from "./generated/AdManager/AdManager";
 import {
   Bidder,
@@ -53,6 +54,13 @@ export function handleTransfer(event: Transfer): void {
   let right = loadRight(toId(event.params.tokenId));
   right.owner = event.params.to;
   right.save();
+}
+
+export function handleSuspendPost(event: SuspendPost): void {
+  let post = loadPost(toId(event.params.postId));
+  post.fromTimestamp = 0;
+  post.toTimestamp = 0;
+  post.save();
 }
 
 export function handleBid(event: Bid): void {
