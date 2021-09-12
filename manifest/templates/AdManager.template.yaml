@@ -16,7 +16,7 @@
       - name: AdManager
         file: ./kaleido-core/abi/contracts/AdManager.sol/AdManager.json
     eventHandlers:
-      - event: NewPost(uint256,address,string,uint256,uint256)
+      - event: NewPost(uint256,address,uint256,string,uint256,uint256)
         handler: handleNewPost
       - event: Accept(uint256,uint256)
         handler: handleAccept
@@ -34,4 +34,6 @@
         handler: handlePropose
       - event: Refund(uint256,uint256,address,uint256)
         handler: handleRefund
+      - event: SuspendPost(uint256)
+        handler: handleSuspendPost
     file: ./src/mapping.ts

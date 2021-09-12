@@ -11,6 +11,7 @@ import {
   NewPost,
   Propose,
   Refund,
+  SuspendPost,
 } from "./generated/AdManager/AdManager";
 import {
   Bidder,
@@ -18,13 +19,14 @@ import {
   Inventory,
   PostContent,
 } from "./generated/schema";
-//export { runTests } from "./tests/mapping.test";
+export { runTests } from "./tests/mapping.test";
 
 export function handleNewPost(event: NewPost): void {
   newInventory(event.params.metadata, event.params.owner);
   let post = new PostContent(toId(event.params.postId));
   post.metadata = event.params.metadata;
   post.owner = event.params.owner;
+  post.minPrice = event.params.minPrice;
   post.fromTimestamp = event.params.fromTimestamp.toI32();
   post.toTimestamp = event.params.toTimestamp.toI32();
   post.inventory = event.params.metadata;
@@ -52,6 +54,13 @@ export function handleTransfer(event: Transfer): void {
   let right = loadRight(toId(event.params.tokenId));
   right.owner = event.params.to;
   right.save();
+}
+
+export function handleSuspendPost(event: SuspendPost): void {
+  let post = loadPost(toId(event.params.postId));
+  post.fromTimestamp = 0;
+  post.toTimestamp = 0;
+  post.save();
 }
 
 export function handleBid(event: Bid): void {
