@@ -1,6 +1,7 @@
 type PostContent @entity {
   id: ID!
   owner: Bytes!
+  minPrice: Int!
   metadata: String!
   fromTimestamp: Int!
   toTimestamp: Int!
