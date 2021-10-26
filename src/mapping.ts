@@ -19,7 +19,7 @@ import {
   Inventory,
   PostContent,
 } from "./generated/schema";
-export { runTests } from "./tests/mapping.test";
+//export { runTests } from "./tests/mapping.test";
 
 export function handleNewPost(event: NewPost): void {
   newInventory(event.params.metadata, event.params.owner);
