@@ -1,10 +1,10 @@
 - kind: ethereum/contract
-  name: AdManager
+  name: EventEmitter
   network: "{{network}}"
   source:
     address: "{{address}}"
     startBlock: {{startBlock}}
-    abi: AdManager
+    abi: EventEmitter
   mapping:
     kind: ethereum/events
     apiVersion: 0.0.4
@@ -13,27 +13,33 @@
       - PostContent
       - Inventory
     abis:
-      - name: AdManager
-        file: ./kaleido-core/abi/contracts/AdManager.sol/AdManager.json
+      - name: EventEmitter
+        file: ./kaleido-core/abi/contracts/peripheries/EventEmitter.sol/EventEmitter.json
     eventHandlers:
-      - event: NewPost(uint256,address,uint256,string,uint256,uint256)
-        handler: handleNewPost
-      - event: Accept(uint256,uint256)
-        handler: handleAccept
-      - event: Bid(uint256,uint256,address,uint256,string)
+      - event: AcceptProposal(uint256,string)
+        handler: handleAcceptProposal
+      - event: Bid(uint256,uint256,address,uint256)
         handler: handleBid
-      - event: Book(uint256,uint256,address,uint256)
-        handler: handleBook
-      - event: Call(uint256,uint256,address,uint256)
-        handler: handleCall
-      - event: Close(uint256,uint256,address,uint256,string)
-        handler: handleClose
-      - event: Deny(uint256,uint256)
-        handler: handleDeny
-      - event: Propose(uint256,uint256,string)
+      - event: Buy(uint256,uint256,address,uint256)
+        handler: handleBuy
+      - event: DeletePeriod(uint256)
+        handler: handleDeletePeriod
+      - event: DeleteSpace(string)
+        handler: handleDeleteSpace
+      - event: DenyProposal(uint256,string,string)
+        handler: handleDenyProposal
+      - event: NewMedia(address,string,uint256)
+        handler: handleNewMedia
+      - event: NewSpace(string)
+        handler: handleNewSpace
+      - event: OfferPeriod(string,uint256,uint256,address,uint256)
+        handler: handleOfferPeriod
+      - event: Propose(uint256,string)
         handler: handlePropose
-      - event: Refund(uint256,uint256,address,uint256)
-        handler: handleRefund
-      - event: SuspendPost(uint256)
-        handler: handleSuspendPost
+      - event: ReceiveToken(uint256,uint256,address,uint256)
+        handler: handleReceiveToken
+      - event: TransferCustom(indexed address,indexed address,indexed uint256)
+        handler: handleTransferCustom
+      - event: Withdraw(uint256)
+        handler: handleWithdraw
     file: ./src/mapping.ts
