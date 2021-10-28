@@ -9,6 +9,5 @@ cat $DATA
 
 mustache \
   -p manifest/templates/AdManager.template.yaml \
-  -p manifest/templates/DistributionRight.template.yaml \
   $DATA \
   subgraph.template.yaml > subgraph.yaml
