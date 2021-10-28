@@ -4,12 +4,11 @@ import {
   assert,
   newMockEvent,
 } from "matchstick-as/assembly/index";
-
 import { Address, BigInt, Bytes, ethereum } from "@graphprotocol/graph-ts";
-import { NewMedia } from "../src/generated/EventEmitter/EventEmitter";
-import { handleNewMedia } from "../src/mapping";
+import { NewMedia, NewSpace } from "../src/generated/EventEmitter/EventEmitter";
+import { handleNewMedia, handleNewSpace } from "../src/mapping";
 
-test("test on handleNewPost", () => {
+test("test on handleNewMedia", () => {
   let contractAddress = address_();
   let eoa = addressFromHexString("0x50414Ac6431279824df9968855181474c919a94B");
   let metadata = meta_();
@@ -21,6 +20,12 @@ test("test on handleNewPost", () => {
   assertMedia(contractAddress, "saltNonce", saltNonce.toString());
   assertMedia(contractAddress, "spaces", "[]");
   clearStore();
+});
+
+test("test on handleNewSpace", () => {
+  let metadata = meta_();
+  _newSpace(mockNewSpace(metadata));
+  assert.fieldEquals("Space", metadata, "id", metadata);
 });
 
 function assertMedia(id: Address, key: string, want: string): void {
@@ -95,6 +100,37 @@ function mockNewMedia(
   return newMedia;
 }
 
+function mockNewSpace(metadata: string): NewSpace {
+  let mockEvent = newMockEvent();
+  let newSpace = new NewSpace(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  newSpace.parameters = new Array();
+  newSpace.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    address_(),
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let metadataParam = strParam_("metadata", metadata);
+  newSpace.parameters.push(metadataParam);
+  return newSpace;
+}
+
 function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
+}
+
+function _newSpace(newSpace: NewSpace): void {
+  handleNewSpace(newSpace);
 }

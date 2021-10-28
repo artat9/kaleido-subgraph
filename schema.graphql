@@ -1,9 +1,11 @@
+
 type Media @entity {
   #id: address
   id: ID!
   #owner: eoa
   owner: Bytes!
   metadata: String!
+  #saltNonce: いらないかも
   saltNonce: BigInt!
   spaces: [Space!] @derivedFrom(field: "media")
 }

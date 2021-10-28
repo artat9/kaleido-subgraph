@@ -1,6 +1,6 @@
-import { NewMedia } from "./generated/EventEmitter/EventEmitter";
+import { NewMedia, NewSpace } from "./generated/EventEmitter/EventEmitter";
 import { Address, BigInt } from "@graphprotocol/graph-ts";
-import { Media } from "./generated/schema";
+import { Media, Space } from "./generated/schema";
 
 export function handleNewMedia(event: NewMedia): void {
   let media = new Media(addressToId(event.params.proxy));
@@ -9,6 +9,11 @@ export function handleNewMedia(event: NewMedia): void {
   media.saltNonce = event.params.saltNonce;
   media.spaces = [];
   media.save();
+}
+
+export function handleNewSpace(event: NewSpace): void {
+  let space = new Space(event.params.metadata);
+  space.save();
 }
 
 let toId = (postId: BigInt): string => {
