@@ -1,49 +1,44 @@
-type PostContent @entity {
+type Media @entity {
+  #id: address
   id: ID!
+  #owner: eoa
   owner: Bytes!
-  minPrice: BigInt!
   metadata: String!
-  fromTimestamp: Int!
-  toTimestamp: Int!
-  successfulBid: Bidder
-  right: DistributionRight
-  inventory: Inventory!
-  bids: [Bidder!] @derivedFrom(field: "bidPost")
-  books: [Bidder!] @derivedFrom(field: "bookedPost")
+  saltNonce: BigInt!
+  spaces: [Space!] @derivedFrom(field: "media")
 }
 
-type Bidder @entity {
+type Space @entity {
+  ## id: metadata
   id: ID!
-  post: PostContent!
-  bookedPost: PostContent
-  bidPost: PostContent
-  sender: Bytes!
-  right: DistributionRight
-  price: BigInt!
-  metadata: String
-  status: DraftStatus!
-  successful: Boolean!
+  # mediaId: contract address
+  metadata: String!
+  media: Media!
+  periods: [Period!] @derivedFrom(field: "space")
 }
 
-type Inventory @entity {
+type Period @entity {
+  ## id: tokenId
   id: ID!
-  owner: Bytes!
-  posts: [PostContent!] @derivedFrom(field: "inventory")
+  media: Media!
+  space: Space!
+  tokenMetadata: String!
+  saleStartTimestamp: Int!
+  saleEndTimestamp: Int!
+  displayStartTimestamp: Int!
+  displayEndTimestamp: Int!
+  pricing: Pricing!
+  minPrice: BigInt!
+  startPrice: BigInt!
+  sold: Boolean!
+  deleted: Boolean!
 }
 
-type DistributionRight @entity {
-  id: ID!
-  owner: Bytes!
-  post: PostContent!
-  burned: Boolean!
+enum Pricing {
+  RRP
+  DPBT
+  BIDDING
+  OFFER
 }
 
-enum DraftStatus {
-  BOOKED
-  LISTED
-  CALLED
-  PROPOSED
-  DENIED
-  ACCEPTED
-  REFUNDED
-}
+
