@@ -19,6 +19,7 @@ test("test on handleNewPost", () => {
   assertMedia(contractAddress, "owner", eoa.toHexString());
   assertMedia(contractAddress, "metadata", metadata);
   assertMedia(contractAddress, "saltNonce", saltNonce.toString());
+  assertMedia(contractAddress, "spaces", "[]");
   clearStore();
 });
 

@@ -7,6 +7,7 @@ export function handleNewMedia(event: NewMedia): void {
   media.owner = event.transaction.from;
   media.metadata = event.params.accountMetadata;
   media.saltNonce = event.params.saltNonce;
+  media.spaces = [];
   media.save();
 }
 
