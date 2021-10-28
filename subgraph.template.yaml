@@ -6,4 +6,3 @@ schema:
   file: ./schema.graphql
 dataSources:
 {{> AdManager.template.yaml}}
-{{> DistributionRight.template.yaml}}
