@@ -6,3 +6,4 @@ generated/
 dist/
 subgraph.yaml
 matchstick
+**/.bin
