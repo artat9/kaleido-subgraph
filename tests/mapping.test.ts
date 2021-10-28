@@ -4,28 +4,34 @@ import {
   assert,
   newMockEvent,
 } from "matchstick-as/assembly/index";
+
 import { Address, BigInt, Bytes, ethereum } from "@graphprotocol/graph-ts";
 import { NewMedia } from "../src/generated/EventEmitter/EventEmitter";
 import { handleNewMedia } from "../src/mapping";
 
 test("test on handleNewPost", () => {
-  test("id should be id hex string", () => {
-    let contractAddress = address_();
-    _newMedia(
-      mockNewMedia(contractAddress, address_(), meta_(), new BigInt(0))
-    );
-    assert.fieldEquals(
-      "Media",
-      contractAddress.toHexString(),
-      "id",
-      contractAddress.toHexString()
-    );
-    clearStore();
-  });
+  let contractAddress = address_();
+  let eoa = addressFromHexString("0x50414Ac6431279824df9968855181474c919a94B");
+  let metadata = meta_();
+  let saltNonce = BigInt.fromString("1234");
+  _newMedia(mockNewMedia(contractAddress, eoa, metadata, saltNonce));
+  assertMedia(contractAddress, "id", contractAddress.toHexString());
+  assertMedia(contractAddress, "owner", eoa.toHexString());
+  assertMedia(contractAddress, "metadata", metadata);
+  assertMedia(contractAddress, "saltNonce", saltNonce.toString());
+  clearStore();
 });
 
+function assertMedia(id: Address, key: string, want: string): void {
+  assert.fieldEquals("Media", id.toHexString(), key, want);
+}
+
 function address_(): Address {
-  return Address.fromString("0xD149ac01A582e65DBaa3D4ae986A6cf3fd758C1b");
+  return addressFromHexString("0xD149ac01A582e65DBaa3D4ae986A6cf3fd758C1b");
+}
+
+function addressFromHexString(val: string): Address {
+  return Address.fromString(val);
 }
 
 function meta_(): string {
@@ -58,26 +64,34 @@ function mockNewMedia(
   metadata: string,
   saltNonce: BigInt
 ): NewMedia {
-  let newMedia = newMockEvent();
+  let mockEvent = newMockEvent();
+  let newMedia = new NewMedia(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
   newMedia.parameters = new Array();
   newMedia.transaction = new ethereum.Transaction(
     new Bytes(0),
     new BigInt(0),
-    address_(),
+    from,
     null,
     new BigInt(0),
     new BigInt(0),
     new BigInt(0),
     new Bytes(0)
   );
-  let idParam = addressParam_("id", id);
+  let idParam = addressParam_("proxy", id);
   let metadataParam = strParam_("accountMetadata", metadata);
   let saltNonceParam = bigIntParam_("saltNonce", saltNonce);
   newMedia.parameters.push(idParam);
   newMedia.parameters.push(metadataParam);
   newMedia.parameters.push(saltNonceParam);
-  newMedia.transaction.from = from;
-  return newMedia as NewMedia;
+  return newMedia;
 }
 
 function _newMedia(newMedia: NewMedia): void {
