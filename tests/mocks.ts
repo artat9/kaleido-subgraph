@@ -1,9 +1,4 @@
-import {
-  clearStore,
-  test,
-  assert,
-  newMockEvent,
-} from 'matchstick-as/assembly/index';
+import { assert, newMockEvent } from 'matchstick-as/assembly/index';
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {
   NewMedia,
@@ -11,8 +6,10 @@ import {
   DeleteSpace,
   DeletePeriod,
   NewPeriod,
+  Buy,
 } from '../src/generated/EventEmitter/EventEmitter';
 import {
+  handleBuy,
   handleDeletePeriod,
   handleDeleteSpace,
   handleNewMedia,
@@ -26,6 +23,10 @@ export function assertMedia(id: Address, key: string, want: string): void {
 
 export function assertPeriod(id: string, key: string, want: string): void {
   assertEquals('Period', id, key, want);
+}
+
+export function assertBuy(id: string, key: string, want: string): void {
+  assertEquals('Buy', id, key, want);
 }
 
 export function assertEquals(
@@ -254,6 +255,44 @@ export function mockDeletePeriod(tokenId: BigInt): DeletePeriod {
   return deletePeriod;
 }
 
+export function mockBuy(
+  tokenId: BigInt,
+  price: BigInt,
+  buyer: Address,
+  timestamp: BigInt
+): Buy {
+  let mockEvent = newMockEvent();
+  let buy = new Buy(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  buy.parameters = new Array();
+  buy.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let tokenIdParam = bigIntParam_('tokenId', tokenId);
+  let priceParam = bigIntParam_('price', price);
+  let buyerParam = addressParam_('buyer', buyer);
+  let timestampParam = bigIntParam_('timestamp', timestamp);
+  buy.parameters.push(tokenIdParam);
+  buy.parameters.push(priceParam);
+  buy.parameters.push(buyerParam);
+  buy.parameters.push(timestampParam);
+  return buy;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -272,4 +311,8 @@ export function _deleteSpace(deleteSpace: DeleteSpace): void {
 
 export function _deletePeriod(deletePeriod: DeletePeriod): void {
   handleDeletePeriod(deletePeriod);
+}
+
+export function _buy(buy: Buy): void {
+  handleBuy(buy);
 }

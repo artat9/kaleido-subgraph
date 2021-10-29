@@ -20,6 +20,14 @@ type Space @entity {
   deleted: Boolean!
 }
 
+type Buy @entity {
+  id: ID!
+  period: Period!
+  buyer: Bytes!
+  timestamp: BigInt!
+}
+
+
 type Period @entity {
   ## id: tokenId
   id: ID!
@@ -33,7 +41,7 @@ type Period @entity {
   pricing: Pricing!
   minPrice: BigInt!
   startPrice: BigInt!
-  sold: Boolean!
+  buy: Buy
   deleted: Boolean!
 }
 

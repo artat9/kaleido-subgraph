@@ -4,14 +4,17 @@ import { BigInt } from '@graphprotocol/graph-ts';
 import {
   addressFromHexString,
   address_,
+  assertBuy,
   assertMedia,
   assertPeriod,
   meta_,
+  mockBuy,
   mockDeletePeriod,
   mockDeleteSpace,
   mockNewMedia,
   mockNewPeriod,
   mockNewSpace,
+  _buy,
   _deletePeriod,
   _deleteSpace,
   _newMedia,
@@ -121,4 +124,33 @@ test('on deletePeriod', () => {
   _deletePeriod(mockDeletePeriod(tokenId));
   assertPeriod(tokenId.toHexString(), 'deleted', 'true');
   clearStore();
+});
+
+test('on buy', () => {
+  let tokenId = new BigInt(1);
+  _newPeriod(
+    mockNewPeriod(
+      tokenId,
+      meta_(),
+      meta_(),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0)
+    )
+  );
+  let price = new BigInt(2);
+  let address = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let timestamp = new BigInt(3);
+  _buy(mockBuy(tokenId, price, address, timestamp));
+  assertBuy(tokenId.toHexString(), 'id', tokenId.toHexString());
+  // TODO: assert period
+  //assertBuy(tokenId.toHexString(), 'period', 'test');
+  assertBuy(tokenId.toHexString(), 'buyer', address.toHexString());
+  assertBuy(tokenId.toHexString(), 'timestamp', timestamp.toString());
+  // TODO: assert period.buy
 });

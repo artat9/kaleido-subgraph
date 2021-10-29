@@ -4,9 +4,11 @@ import {
   NewMedia,
   NewPeriod,
   NewSpace,
+  Buy,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { Media, Period, Space } from './generated/schema';
+import * as schema from './generated/schema';
 
 export function handleNewMedia(event: NewMedia): void {
   let media = new Media(addressToId(event.params.proxy));
@@ -35,7 +37,6 @@ export function handleNewPeriod(event: NewPeriod): void {
   period.pricing = pricing(event.params.pricing);
   period.saleEndTimestamp = event.params.saleEndTimestamp;
   period.saleStartTimestamp = event.params.saleStartTimestamp;
-  period.sold = false;
   period.space = event.params.spaceMetadata;
   period.tokenMetadata = event.params.tokenMetadata;
   period.save();
@@ -45,6 +46,18 @@ export function handleDeleteSpace(event: DeleteSpace): void {
   let space = loadSpace(event.params.metadata);
   space.deleted = true;
   space.save();
+}
+
+export function handleBuy(event: Buy): void {
+  let spaceId = toId(event.params.tokenId);
+  let period = loadPeriod(event.params.tokenId);
+  let buy = new schema.Buy(spaceId);
+  buy.buyer = event.params.buyer;
+  buy.period = period.id;
+  buy.timestamp = event.params.timestamp;
+  buy.save();
+  period.buy = buy.id;
+  period.save();
 }
 
 export function handleDeletePeriod(event: DeletePeriod): void {
