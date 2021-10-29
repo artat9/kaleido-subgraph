@@ -1,10 +1,11 @@
 import {
+  DeleteSpace,
   NewMedia,
   NewPeriod,
   NewSpace,
-} from "./generated/EventEmitter/EventEmitter";
-import { Address, BigInt } from "@graphprotocol/graph-ts";
-import { Media, Period, Space } from "./generated/schema";
+} from './generated/EventEmitter/EventEmitter';
+import { Address, BigInt } from '@graphprotocol/graph-ts';
+import { Media, Period, Space } from './generated/schema';
 
 export function handleNewMedia(event: NewMedia): void {
   let media = new Media(addressToId(event.params.proxy));
@@ -18,6 +19,7 @@ export function handleNewMedia(event: NewMedia): void {
 export function handleNewSpace(event: NewSpace): void {
   let space = new Space(event.params.metadata);
   // TODO: media
+  space.deleted = false;
   space.save();
 }
 
@@ -38,23 +40,33 @@ export function handleNewPeriod(event: NewPeriod): void {
   period.save();
 }
 
+export function handleDeleteSpace(event: DeleteSpace): void {
+  let space = loadSpace(event.params.metadata);
+  space.deleted = true;
+  space.save();
+}
+
 function pricing(val: i32): string {
   switch (val) {
     case 0:
-      return "RRP";
+      return 'RRP';
     case 1:
-      return "DPBT";
+      return 'DPBT';
     case 2:
-      return "BIDDING";
+      return 'BIDDING';
     case 3:
-      return "OFFER";
+      return 'OFFER';
     default:
-      return "";
+      return '';
   }
 }
 
 let toId = (postId: BigInt): string => {
   return postId.toHexString();
+};
+
+let loadSpace = (metadata: string): Space => {
+  return Space.load(metadata)!!;
 };
 
 let addressToId = (address: Address): string => {

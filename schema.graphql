@@ -17,6 +17,7 @@ type Space @entity {
   metadata: String!
   media: Media!
   periods: [Period!] @derivedFrom(field: "space")
+  deleted: Boolean!
 }
 
 type Period @entity {

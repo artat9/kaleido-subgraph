@@ -1,3 +1,4 @@
+import { DeleteSpace } from './../src/generated/EventEmitter/EventEmitter';
 import { NewPeriod } from '../src/generated/EventEmitter/EventEmitter';
 import {
   clearStore,
@@ -8,6 +9,7 @@ import {
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import { NewMedia, NewSpace } from '../src/generated/EventEmitter/EventEmitter';
 import {
+  handleDeleteSpace,
   handleNewMedia,
   handleNewPeriod,
   handleNewSpace,
@@ -31,6 +33,7 @@ test('on handleNewSpace', () => {
   let metadata = meta_();
   _newSpace(mockNewSpace(metadata));
   assert.fieldEquals('Space', metadata, 'id', metadata);
+  assert.fieldEquals('Space', metadata, 'deleted', 'false');
 });
 
 test('on handleNewPeriod', () => {
@@ -83,6 +86,13 @@ test('on handleNewPeriod', () => {
   );
   assertPeriod(tokenId.toHexString(), 'pricing', 'RRP');
   assertPeriod(tokenId.toHexString(), 'minPrice', minPrice.toString());
+});
+
+test('on deleteSpace', () => {
+  let metadata = meta_();
+  _newSpace(mockNewSpace(metadata));
+  _deleteSpace(mockDeleteSpace(metadata));
+  assert.fieldEquals('Space', metadata, 'deleted', 'true');
 });
 
 function assertMedia(id: Address, key: string, want: string): void {
@@ -262,6 +272,33 @@ function mockNewPeriod(
   return newPeriod;
 }
 
+function mockDeleteSpace(meta: string): DeleteSpace {
+  let mockEvent = newMockEvent();
+  let deleteSpace = new DeleteSpace(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  deleteSpace.parameters = new Array();
+  deleteSpace.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let metaParam = strParam_('metadata', meta);
+  deleteSpace.parameters.push(metaParam);
+  return deleteSpace;
+}
+
 function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -272,4 +309,8 @@ function _newSpace(newSpace: NewSpace): void {
 
 function _newPeriod(newPeriod: NewPeriod): void {
   handleNewPeriod(newPeriod);
+}
+
+function _deleteSpace(deleteSpace: DeleteSpace): void {
+  handleDeleteSpace(deleteSpace);
 }
