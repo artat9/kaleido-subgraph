@@ -1,4 +1,5 @@
 import {
+  DeletePeriod,
   DeleteSpace,
   NewMedia,
   NewPeriod,
@@ -46,6 +47,12 @@ export function handleDeleteSpace(event: DeleteSpace): void {
   space.save();
 }
 
+export function handleDeletePeriod(event: DeletePeriod): void {
+  let period = loadPeriod(event.params.tokenId);
+  period.deleted = true;
+  period.save();
+}
+
 function pricing(val: i32): string {
   switch (val) {
     case 0:
@@ -67,6 +74,10 @@ let toId = (postId: BigInt): string => {
 
 let loadSpace = (metadata: string): Space => {
   return Space.load(metadata)!!;
+};
+
+let loadPeriod = (tokenId: BigInt): Period => {
+  return Period.load(toId(tokenId))!!;
 };
 
 let addressToId = (address: Address): string => {
