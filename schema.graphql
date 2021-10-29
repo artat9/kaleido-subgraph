@@ -25,10 +25,10 @@ type Period @entity {
   media: Media!
   space: Space!
   tokenMetadata: String!
-  saleStartTimestamp: Int!
-  saleEndTimestamp: Int!
-  displayStartTimestamp: Int!
-  displayEndTimestamp: Int!
+  saleStartTimestamp: BigInt!
+  saleEndTimestamp: BigInt!
+  displayStartTimestamp: BigInt!
+  displayEndTimestamp: BigInt!
   pricing: Pricing!
   minPrice: BigInt!
   startPrice: BigInt!

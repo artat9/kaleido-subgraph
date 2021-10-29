@@ -31,6 +31,8 @@
         handler: handleDenyProposal
       - event: NewMedia(address,string,uint256)
         handler: handleNewMedia
+      - event: NewPeriod(uint256,string,string,uint256,uint256,uint256,uint256,uint8,uint256)
+        handler: handleNewPeriod
       - event: NewSpace(string)
         handler: handleNewSpace
       - event: OfferPeriod(string,uint256,uint256,address,uint256)
