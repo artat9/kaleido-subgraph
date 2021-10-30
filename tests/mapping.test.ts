@@ -18,6 +18,7 @@ import {
   mockNewPeriod,
   mockNewSpace,
   mockOfferPeriod,
+  mockUpdateMedia,
   _bid,
   _buy,
   _deletePeriod,
@@ -26,6 +27,7 @@ import {
   _newPeriod,
   _newSpace,
   _offerPeriod,
+  _updateMedia,
 } from './mocks';
 import { Period } from '../src/generated/schema';
 
@@ -217,5 +219,19 @@ test('on offer period', () => {
   assertOffer(id, 'from', address.toHexString());
   assertOffer(id, 'price', price.toString());
   assertOffer(id, 'status', 'OFFERED');
+  clearStore();
+});
+
+test('on update media', () => {
+  let contractAddress = address_();
+  let saltNonce = BigInt.fromString('1234');
+  _newMedia(mockNewMedia(contractAddress, address_(), meta_(), saltNonce));
+  let newEoa = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let newMetadata = 'Afrer';
+  _updateMedia(mockUpdateMedia(contractAddress, newEoa, newMetadata));
+  assertMedia(contractAddress, 'owner', newEoa.toHexString());
+  assertMedia(contractAddress, 'metadata', newMetadata);
   clearStore();
 });

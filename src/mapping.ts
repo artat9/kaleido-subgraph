@@ -22,7 +22,15 @@ export function handleNewMedia(event: NewMedia): void {
   media.save();
 }
 
-export function handleUpdateMedia(event: UpdateMedia): void {}
+export function handleUpdateMedia(event: UpdateMedia): void {
+  let media = Media.load(addressToId(event.params.proxy));
+  if (!media) {
+    return;
+  }
+  media.owner = event.params.mediaEOA;
+  media.metadata = event.params.accountMetadata;
+  media.save();
+}
 
 export function handleNewSpace(event: NewSpace): void {
   let space = new Space(event.params.metadata);

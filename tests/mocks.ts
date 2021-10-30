@@ -1,3 +1,4 @@
+import { UpdateMedia } from './../src/generated/EventEmitter/EventEmitter';
 import { assert, newMockEvent } from 'matchstick-as/assembly/index';
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {
@@ -19,6 +20,7 @@ import {
   handleNewPeriod,
   handleNewSpace,
   handleOfferPeriod,
+  handleUpdateMedia,
 } from '../src/mapping';
 
 export function assertMedia(id: Address, key: string, want: string): void {
@@ -392,6 +394,41 @@ export function mockOfferPeriod(
   return offer;
 }
 
+export function mockUpdateMedia(
+  proxy: Address,
+  mediaEOA: Address,
+  meta: string
+): UpdateMedia {
+  let mockEvent = newMockEvent();
+  let updateMedia = new UpdateMedia(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  updateMedia.parameters = new Array();
+  updateMedia.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let metadataParam = strParam_('accontMetadata', meta);
+  let proxyParam = addressParam_('proxy', proxy);
+  let mediaEOAParam = addressParam_('mediaEOA', mediaEOA);
+  updateMedia.parameters.push(proxyParam);
+  updateMedia.parameters.push(mediaEOAParam);
+  updateMedia.parameters.push(metadataParam);
+  return updateMedia;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -422,4 +459,8 @@ export function _bid(bid: Bid): void {
 
 export function _offerPeriod(offer: OfferPeriod): void {
   handleOfferPeriod(offer);
+}
+
+export function _updateMedia(updateMedia: UpdateMedia): void {
+  handleUpdateMedia(updateMedia);
 }
