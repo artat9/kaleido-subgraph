@@ -20,6 +20,13 @@ type Space @entity {
   offers: [Offer!] @derivedFrom(field: "space")
   deleted: Boolean!
 }
+
+#type Participant @entity {
+#  ## id: address
+#  id: ID!
+#  media: [Media!]
+#}
+
 type Period @entity {
   ## id: tokenId
   id: ID!
@@ -62,7 +69,13 @@ type Offer @entity {
   displayEndTimestamp: BigInt!
   from: Bytes!
   price: BigInt!
-  accepted: Boolean!
+  status: OfferStatus!
+}
+
+enum OfferStatus {
+  DENIED
+  ACCEPTED
+  OFFERED
 }
 
 enum Pricing {

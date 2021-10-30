@@ -113,9 +113,11 @@ export function mockNewMedia(
     new Bytes(0)
   );
   let idParam = addressParam_('proxy', id);
+  let eoaParam = addressParam_('mediaEOA', from);
   let metadataParam = strParam_('accountMetadata', metadata);
   let saltNonceParam = bigIntParam_('saltNonce', saltNonce);
   newMedia.parameters.push(idParam);
+  newMedia.parameters.push(eoaParam);
   newMedia.parameters.push(metadataParam);
   newMedia.parameters.push(saltNonceParam);
   return newMedia;

@@ -29,7 +29,7 @@
         handler: handleDeleteSpace
       - event: DenyProposal(uint256,string,string)
         handler: handleDenyProposal
-      - event: NewMedia(address,string,uint256)
+      - event: NewMedia(address,address,string,uint256)
         handler: handleNewMedia
       - event: NewPeriod(uint256,string,string,uint256,uint256,uint256,uint256,uint8,uint256)
         handler: handleNewPeriod

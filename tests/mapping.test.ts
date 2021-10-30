@@ -216,6 +216,6 @@ test('on offer period', () => {
   assertOffer(id, 'displayEndTimestamp', end.toString());
   assertOffer(id, 'from', address.toHexString());
   assertOffer(id, 'price', price.toString());
-  assertOffer(id, 'accepted', 'false');
+  assertOffer(id, 'status', 'OFFERED');
   clearStore();
 });

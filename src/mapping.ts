@@ -7,6 +7,7 @@ import {
   Buy,
   Bid,
   OfferPeriod,
+  UpdateMedia,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { Media, Period, Space, Offer } from './generated/schema';
@@ -14,12 +15,14 @@ import * as schema from './generated/schema';
 
 export function handleNewMedia(event: NewMedia): void {
   let media = new Media(addressToId(event.params.proxy));
-  media.owner = event.transaction.from;
+  media.owner = event.params.mediaEOA;
   media.metadata = event.params.accountMetadata;
   media.saltNonce = event.params.saltNonce;
   media.spaces = [];
   media.save();
 }
+
+export function handleUpdateMedia(event: UpdateMedia): void {}
 
 export function handleNewSpace(event: NewSpace): void {
   let space = new Space(event.params.metadata);
@@ -77,7 +80,7 @@ export function handleOfferPeriod(event: OfferPeriod): void {
   offer.displayEndTimestamp = event.params.displayEndTimestamp;
   offer.from = event.params.sender;
   offer.price = event.params.price;
-  offer.accepted = false;
+  offer.status = 'OFFERED';
   offer.save();
 }
 
