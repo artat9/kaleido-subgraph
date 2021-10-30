@@ -6,9 +6,10 @@ import {
   NewSpace,
   Buy,
   Bid,
+  OfferPeriod,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { Media, Period, Space } from './generated/schema';
+import { Media, Period, Space, Offer } from './generated/schema';
 import * as schema from './generated/schema';
 
 export function handleNewMedia(event: NewMedia): void {
@@ -63,8 +64,21 @@ export function handleBuy(event: Buy): void {
   buy.period = period.id;
   buy.timestamp = event.params.timestamp;
   buy.save();
-  period.bid = buy.id;
+  period.bidding = buy.id;
   period.save();
+}
+
+export function handleOfferPeriod(event: OfferPeriod): void {
+  // TODO: emit tokenID
+  let offer = new Offer('tokenId');
+  offer.metadata = event.params.spaceMetadata;
+  offer.space = event.params.spaceMetadata;
+  offer.displayStartTimestamp = event.params.displayStartTimestamp;
+  offer.displayEndTimestamp = event.params.displayEndTimestamp;
+  offer.from = event.params.sender;
+  offer.price = event.params.price;
+  offer.accepted = false;
+  offer.save();
 }
 
 export function handleBid(event: Bid): void {
@@ -78,7 +92,7 @@ export function handleBid(event: Bid): void {
   bid.period = period.id;
   bid.timestamp = event.params.timestamp;
   bid.save();
-  period.bid = bid.id;
+  period.bidding = bid.id;
   period.save();
 }
 

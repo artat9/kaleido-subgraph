@@ -17,6 +17,7 @@ type Space @entity {
   metadata: String!
   media: Media!
   periods: [Period!] @derivedFrom(field: "space")
+  offers: [Offer!] @derivedFrom(field: "space")
   deleted: Boolean!
 }
 type Period @entity {
@@ -50,6 +51,18 @@ type Bid @entity {
   period: Period!
   buyer: Bytes!
   timestamp: BigInt!
+}
+
+type Offer @entity {
+  #id: tokenID
+  id: ID!
+  metadata: String!
+  space: Space!
+  displayStartTimestamp: BigInt!
+  displayEndTimestamp: BigInt!
+  from: Bytes!
+  price: BigInt!
+  accepted: Boolean!
 }
 
 enum Pricing {

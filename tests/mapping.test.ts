@@ -7,6 +7,7 @@ import {
   assertBid,
   assertBuy,
   assertMedia,
+  assertOffer,
   assertPeriod,
   meta_,
   mockBid,
@@ -16,6 +17,7 @@ import {
   mockNewMedia,
   mockNewPeriod,
   mockNewSpace,
+  mockOfferPeriod,
   _bid,
   _buy,
   _deletePeriod,
@@ -23,6 +25,7 @@ import {
   _newMedia,
   _newPeriod,
   _newSpace,
+  _offerPeriod,
 } from './mocks';
 import { Period } from '../src/generated/schema';
 
@@ -193,4 +196,26 @@ test('on bid', () => {
   // TODO: fix error
   //assert.stringEquals(period.bids.length.toString(), '1');
   assert.assertNotNull(period);
+  clearStore();
+});
+
+test('on offer period', () => {
+  // TODO: id
+  let id = 'tokenId';
+  let meta = meta_();
+  let start = new BigInt(2);
+  let end = new BigInt(3);
+  let address = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let price = new BigInt(100);
+  _offerPeriod(mockOfferPeriod(meta, start, end, address, price));
+  assertOffer(id, 'id', id);
+  assertOffer(id, 'metadata', meta);
+  assertOffer(id, 'displayStartTimestamp', start.toString());
+  assertOffer(id, 'displayEndTimestamp', end.toString());
+  assertOffer(id, 'from', address.toHexString());
+  assertOffer(id, 'price', price.toString());
+  assertOffer(id, 'accepted', 'false');
+  clearStore();
 });

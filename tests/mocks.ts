@@ -8,6 +8,7 @@ import {
   NewPeriod,
   Buy,
   Bid,
+  OfferPeriod,
 } from '../src/generated/EventEmitter/EventEmitter';
 import {
   handleBid,
@@ -17,6 +18,7 @@ import {
   handleNewMedia,
   handleNewPeriod,
   handleNewSpace,
+  handleOfferPeriod,
 } from '../src/mapping';
 
 export function assertMedia(id: Address, key: string, want: string): void {
@@ -33,6 +35,10 @@ export function assertBuy(id: string, key: string, want: string): void {
 
 export function assertBid(id: string, key: string, want: string): void {
   assertEquals('Bid', id, key, want);
+}
+
+export function assertOffer(id: string, key: string, want: string): void {
+  assertEquals('Offer', id, key, want);
 }
 
 export function assertEquals(
@@ -337,6 +343,53 @@ export function mockBid(
   return bid;
 }
 
+export function mockOfferPeriod(
+  metadata: string,
+  displayStartTimestamp: BigInt,
+  displayEndTimestamp: BigInt,
+  from: Address,
+  price: BigInt
+): OfferPeriod {
+  let mockEvent = newMockEvent();
+  let offer = new OfferPeriod(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  offer.parameters = new Array();
+  offer.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let metadataParam = strParam_('spaceMetadata', metadata);
+  let displayStartTimestampParam = bigIntParam_(
+    'displayStartTimestamp',
+    displayStartTimestamp
+  );
+  let displayEndTimestampParam = bigIntParam_(
+    'displayEndTimestamp',
+    displayEndTimestamp
+  );
+  let senderParam = addressParam_('sender', from);
+  let priceParam = bigIntParam_('price', price);
+  offer.parameters.push(metadataParam);
+  offer.parameters.push(displayStartTimestampParam);
+  offer.parameters.push(displayEndTimestampParam);
+  offer.parameters.push(senderParam);
+  offer.parameters.push(priceParam);
+  return offer;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -363,4 +416,8 @@ export function _buy(buy: Buy): void {
 
 export function _bid(bid: Bid): void {
   handleBid(bid);
+}
+
+export function _offerPeriod(offer: OfferPeriod): void {
+  handleOfferPeriod(offer);
 }
