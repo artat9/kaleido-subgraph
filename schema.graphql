@@ -19,15 +19,6 @@ type Space @entity {
   periods: [Period!] @derivedFrom(field: "space")
   deleted: Boolean!
 }
-
-type Buy @entity {
-  id: ID!
-  period: Period!
-  buyer: Bytes!
-  timestamp: BigInt!
-}
-
-
 type Period @entity {
   ## id: tokenId
   id: ID!
@@ -42,7 +33,23 @@ type Period @entity {
   minPrice: BigInt!
   startPrice: BigInt!
   buy: Buy
+  bidding: Bid
+  bids: [Bid!] @derivedFrom(field: "period")
   deleted: Boolean!
+}
+
+type Buy @entity {
+  id: ID!
+  period: Period!
+  buyer: Bytes!
+  timestamp: BigInt!
+}
+
+type Bid @entity {
+  id: ID!
+  period: Period!
+  buyer: Bytes!
+  timestamp: BigInt!
 }
 
 enum Pricing {

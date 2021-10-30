@@ -5,6 +5,7 @@ import {
   NewPeriod,
   NewSpace,
   Buy,
+  Bid,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { Media, Period, Space } from './generated/schema';
@@ -44,6 +45,9 @@ export function handleNewPeriod(event: NewPeriod): void {
 
 export function handleDeleteSpace(event: DeleteSpace): void {
   let space = loadSpace(event.params.metadata);
+  if (!space) {
+    return;
+  }
   space.deleted = true;
   space.save();
 }
@@ -51,17 +55,38 @@ export function handleDeleteSpace(event: DeleteSpace): void {
 export function handleBuy(event: Buy): void {
   let spaceId = toId(event.params.tokenId);
   let period = loadPeriod(event.params.tokenId);
+  if (!period) {
+    return;
+  }
   let buy = new schema.Buy(spaceId);
   buy.buyer = event.params.buyer;
   buy.period = period.id;
   buy.timestamp = event.params.timestamp;
   buy.save();
-  period.buy = buy.id;
+  period.bid = buy.id;
+  period.save();
+}
+
+export function handleBid(event: Bid): void {
+  let spaceId = toId(event.params.tokenId);
+  let period = loadPeriod(event.params.tokenId);
+  if (!period) {
+    return;
+  }
+  let bid = new schema.Bid(spaceId);
+  bid.buyer = event.params.buyer;
+  bid.period = period.id;
+  bid.timestamp = event.params.timestamp;
+  bid.save();
+  period.bid = bid.id;
   period.save();
 }
 
 export function handleDeletePeriod(event: DeletePeriod): void {
   let period = loadPeriod(event.params.tokenId);
+  if (!period) {
+    return;
+  }
   period.deleted = true;
   period.save();
 }
@@ -85,12 +110,12 @@ let toId = (postId: BigInt): string => {
   return postId.toHexString();
 };
 
-let loadSpace = (metadata: string): Space => {
-  return Space.load(metadata)!!;
+let loadSpace = (metadata: string): Space | null => {
+  return Space.load(metadata);
 };
 
-let loadPeriod = (tokenId: BigInt): Period => {
-  return Period.load(toId(tokenId))!!;
+let loadPeriod = (tokenId: BigInt): Period | null => {
+  return Period.load(toId(tokenId));
 };
 
 let addressToId = (address: Address): string => {

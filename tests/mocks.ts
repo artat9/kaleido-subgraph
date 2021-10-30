@@ -7,8 +7,10 @@ import {
   DeletePeriod,
   NewPeriod,
   Buy,
+  Bid,
 } from '../src/generated/EventEmitter/EventEmitter';
 import {
+  handleBid,
   handleBuy,
   handleDeletePeriod,
   handleDeleteSpace,
@@ -27,6 +29,10 @@ export function assertPeriod(id: string, key: string, want: string): void {
 
 export function assertBuy(id: string, key: string, want: string): void {
   assertEquals('Buy', id, key, want);
+}
+
+export function assertBid(id: string, key: string, want: string): void {
+  assertEquals('Bid', id, key, want);
 }
 
 export function assertEquals(
@@ -293,6 +299,44 @@ export function mockBuy(
   return buy;
 }
 
+export function mockBid(
+  tokenId: BigInt,
+  price: BigInt,
+  buyer: Address,
+  timestamp: BigInt
+): Bid {
+  let mockEvent = newMockEvent();
+  let bid = new Bid(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  bid.parameters = new Array();
+  bid.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  let tokenIdParam = bigIntParam_('tokenId', tokenId);
+  let priceParam = bigIntParam_('price', price);
+  let buyerParam = addressParam_('buyer', buyer);
+  let timestampParam = bigIntParam_('timestamp', timestamp);
+  bid.parameters.push(tokenIdParam);
+  bid.parameters.push(priceParam);
+  bid.parameters.push(buyerParam);
+  bid.parameters.push(timestampParam);
+  return bid;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -315,4 +359,8 @@ export function _deletePeriod(deletePeriod: DeletePeriod): void {
 
 export function _buy(buy: Buy): void {
   handleBuy(buy);
+}
+
+export function _bid(bid: Bid): void {
+  handleBid(bid);
 }

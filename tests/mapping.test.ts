@@ -4,16 +4,19 @@ import { BigInt } from '@graphprotocol/graph-ts';
 import {
   addressFromHexString,
   address_,
+  assertBid,
   assertBuy,
   assertMedia,
   assertPeriod,
   meta_,
+  mockBid,
   mockBuy,
   mockDeletePeriod,
   mockDeleteSpace,
   mockNewMedia,
   mockNewPeriod,
   mockNewSpace,
+  _bid,
   _buy,
   _deletePeriod,
   _deleteSpace,
@@ -21,6 +24,7 @@ import {
   _newPeriod,
   _newSpace,
 } from './mocks';
+import { Period } from '../src/generated/schema';
 
 test('on handleNewMedia', () => {
   let contractAddress = address_();
@@ -153,4 +157,40 @@ test('on buy', () => {
   assertBuy(tokenId.toHexString(), 'buyer', address.toHexString());
   assertBuy(tokenId.toHexString(), 'timestamp', timestamp.toString());
   // TODO: assert period.buy
+  let period = Period.load(tokenId.toHexString());
+  assert.assertNotNull(period);
+  clearStore();
+});
+
+test('on bid', () => {
+  let tokenId = new BigInt(1);
+  _newPeriod(
+    mockNewPeriod(
+      tokenId,
+      meta_(),
+      meta_(),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0),
+      new BigInt(0)
+    )
+  );
+  let price = new BigInt(2);
+  let address = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let timestamp = new BigInt(3);
+  _bid(mockBid(tokenId, price, address, timestamp));
+  assertBid(tokenId.toHexString(), 'id', tokenId.toHexString());
+  // TODO: assert period
+  //assertBuy(tokenId.toHexString(), 'period', 'test');
+  assertBid(tokenId.toHexString(), 'buyer', address.toHexString());
+  assertBid(tokenId.toHexString(), 'timestamp', timestamp.toString());
+  // TODO: assert period.buy
+  let period = Period.load(tokenId.toHexString())!!;
+  // TODO: fix error
+  //assert.stringEquals(period.bids.length.toString(), '1');
+  assert.assertNotNull(period);
 });
