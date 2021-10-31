@@ -204,7 +204,7 @@ test('on bid', () => {
   assertBid(tokenId.toHexString(), 'buyer', address.toHexString());
   assertBid(tokenId.toHexString(), 'timestamp', timestamp.toString());
   // TODO: assert period.buy
-  let period = Period.load(tokenId.toHexString())!!;
+  let period = Period.load(tokenId.toHexString());
   // TODO: fix error
   //assert.stringEquals(period.bids.length.toString(), '1');
   assert.assertNotNull(period);

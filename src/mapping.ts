@@ -20,6 +20,7 @@ import {
   Space,
   Offer,
   DeniedProposal,
+  Kaleido,
 } from './generated/schema';
 import * as schema from './generated/schema';
 
@@ -133,6 +134,7 @@ export function handleBuy(event: Buy): void {
   buy.save();
   period.bidding = buy.id;
   period.save();
+  addCirculation(event.params.price);
 }
 
 export function handleOfferPeriod(event: OfferPeriod): void {
@@ -146,6 +148,7 @@ export function handleOfferPeriod(event: OfferPeriod): void {
   offer.price = event.params.price;
   offer.status = 'OFFERED';
   offer.save();
+  addCirculation(event.params.price);
 }
 
 export function handleBid(event: Bid): void {
@@ -161,6 +164,7 @@ export function handleBid(event: Bid): void {
   bid.save();
   period.bidding = bid.id;
   period.save();
+  addCirculation(event.params.price);
 }
 
 export function handleDeletePeriod(event: DeletePeriod): void {
@@ -226,6 +230,23 @@ let loadOffer = (tokenId: BigInt): Offer | null => {
 
 let loadPeriod = (tokenId: BigInt): Period | null => {
   return Period.load(toId(tokenId));
+};
+
+let loadKaleido = (): Kaleido => {
+  let k = schema.Kaleido.load('kaleido');
+  if (k) {
+    return k;
+  }
+  let newK = new Kaleido('kaleido');
+  newK.circulation = BigInt.fromI32(0);
+  newK.save();
+  return newK;
+};
+
+let addCirculation = (amount: BigInt): void => {
+  let k = loadKaleido();
+  k.circulation = k.circulation.plus(amount);
+  k.save();
 };
 
 let addressToId = (address: Address): string => {

@@ -1,3 +1,8 @@
+type Kaleido @entity {
+  #id: Kaleido
+  id: ID!
+  circulation: BigInt!
+}
 
 type Media @entity {
   #id: address
