@@ -12,6 +12,7 @@ import {
   assertPeriod,
   meta_,
   mockAcceptOffer,
+  mockAcceptProposal,
   mockBid,
   mockBuy,
   mockDeletePeriod,
@@ -23,6 +24,7 @@ import {
   mockPropose,
   mockUpdateMedia,
   _acceptOffer,
+  _acceptProposal,
   _bid,
   _buy,
   _deletePeriod,
@@ -297,4 +299,26 @@ test('on propose', () => {
   let meta = 'propose';
   _propose(mockPropose(tokenId, meta));
   assertPeriod(tokenId.toHexString(), 'proposedMetadata', meta);
+  assertPeriod(tokenId.toHexString(), 'proposalAccepted', 'false');
+});
+
+test('on accept proposal', () => {
+  let tokenId = BigInt.fromI32(1);
+  _newPeriod(
+    mockNewPeriod(
+      tokenId,
+      meta_(),
+      meta_(),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
+    )
+  );
+  let meta = 'propose';
+  _propose(mockPropose(tokenId, meta));
+  _acceptProposal(mockAcceptProposal(tokenId, meta));
+  assertPeriod(tokenId.toHexString(), 'proposalAccepted', 'true');
 });

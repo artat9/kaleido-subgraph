@@ -1,5 +1,6 @@
 import {
   AcceptOffer,
+  AcceptProposal,
   Propose,
   UpdateMedia,
 } from './../src/generated/EventEmitter/EventEmitter';
@@ -17,6 +18,7 @@ import {
 } from '../src/generated/EventEmitter/EventEmitter';
 import {
   handleAcceptOffer,
+  handleAcceptProposal,
   handleBid,
   handleBuy,
   handleDeletePeriod,
@@ -467,6 +469,36 @@ export function mockPropose(tokenId: BigInt, metadata: string): Propose {
   return propose;
 }
 
+export function mockAcceptProposal(
+  tokenId: BigInt,
+  metadata: string
+): AcceptProposal {
+  let mockEvent = newMockEvent();
+  let propose = new AcceptProposal(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  propose.parameters = new Array();
+  propose.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    BigInt.fromI32(0),
+    mockEvent.address,
+    null,
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    new Bytes(0)
+  );
+  propose.parameters.push(bigIntParam_('tokenId', tokenId));
+  propose.parameters.push(strParam_('metadata', metadata));
+  return propose;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -509,4 +541,8 @@ export function _acceptOffer(acceptOffer: AcceptOffer): void {
 
 export function _propose(propose: Propose): void {
   handlePropose(propose);
+}
+
+export function _acceptProposal(acceptProposal: AcceptProposal): void {
+  handleAcceptProposal(acceptProposal);
 }

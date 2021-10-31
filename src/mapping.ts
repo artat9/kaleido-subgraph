@@ -10,6 +10,7 @@ import {
   UpdateMedia,
   AcceptOffer,
   Propose,
+  AcceptProposal,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { Media, Period, Space, Offer } from './generated/schema';
@@ -170,6 +171,15 @@ export function handlePropose(event: Propose): void {
     return;
   }
   period.proposedMetadata = event.params.metadata;
+  period.save();
+}
+
+export function handleAcceptProposal(event: AcceptProposal): void {
+  let period = loadPeriod(event.params.tokenId);
+  if (!period) {
+    return;
+  }
+  period.proposalAccepted = true;
   period.save();
 }
 

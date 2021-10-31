@@ -45,8 +45,10 @@ type Period @entity {
   bids: [Bid!] @derivedFrom(field: "period")
   advertiser: Bytes
   proposedMetadata: String
+  proposalAccepted: Boolean!
   deleted: Boolean!
 }
+
 
 type Buy @entity {
   id: ID!
