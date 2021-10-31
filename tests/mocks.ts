@@ -1,5 +1,6 @@
 import {
   AcceptOffer,
+  Propose,
   UpdateMedia,
 } from './../src/generated/EventEmitter/EventEmitter';
 import { assert, newMockEvent } from 'matchstick-as/assembly/index';
@@ -24,6 +25,7 @@ import {
   handleNewPeriod,
   handleNewSpace,
   handleOfferPeriod,
+  handlePropose,
   handleUpdateMedia,
 } from '../src/mapping';
 
@@ -110,12 +112,12 @@ export function mockNewMedia(
   newMedia.parameters = new Array();
   newMedia.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     from,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   newMedia.parameters.push(addressParam_('proxy', id));
@@ -139,12 +141,12 @@ export function mockNewSpace(metadata: string): NewSpace {
   newSpace.parameters = new Array();
   newSpace.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     address_(),
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   newSpace.parameters.push(strParam_('metadata', metadata));
@@ -175,12 +177,12 @@ export function mockNewPeriod(
   newPeriod.parameters = new Array();
   newPeriod.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     address_(),
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   newPeriod.parameters.push(bigIntParam_('tokenId', tokenId));
@@ -215,12 +217,12 @@ export function mockDeleteSpace(meta: string): DeleteSpace {
   deleteSpace.parameters = new Array();
   deleteSpace.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   deleteSpace.parameters.push(strParam_('metadata', meta));
@@ -241,12 +243,12 @@ export function mockDeletePeriod(tokenId: BigInt): DeletePeriod {
   deletePeriod.parameters = new Array();
   deletePeriod.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   deletePeriod.parameters.push(bigIntParam_('tokenId', tokenId));
@@ -272,12 +274,12 @@ export function mockBuy(
   buy.parameters = new Array();
   buy.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   buy.parameters.push(bigIntParam_('tokenId', tokenId));
@@ -306,12 +308,12 @@ export function mockBid(
   bid.parameters = new Array();
   bid.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   bid.parameters.push(bigIntParam_('tokenId', tokenId));
@@ -341,12 +343,12 @@ export function mockOfferPeriod(
   offer.parameters = new Array();
   offer.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   offer.parameters.push(strParam_('spaceMetadata', metadata));
@@ -379,12 +381,12 @@ export function mockUpdateMedia(
   updateMedia.parameters = new Array();
   updateMedia.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   let metadataParam = strParam_('accontMetadata', meta);
@@ -417,12 +419,12 @@ export function mockAcceptOffer(
   acceptOffer.parameters = new Array();
   acceptOffer.transaction = new ethereum.Transaction(
     new Bytes(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
     mockEvent.address,
     null,
-    new BigInt(0),
-    new BigInt(0),
-    new BigInt(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
     new Bytes(0)
   );
   acceptOffer.parameters.push(bigIntParam_('tokenId', tokenId));
@@ -436,6 +438,33 @@ export function mockAcceptOffer(
   );
   acceptOffer.parameters.push(bigIntParam_('price', price));
   return acceptOffer;
+}
+
+export function mockPropose(tokenId: BigInt, metadata: string): Propose {
+  let mockEvent = newMockEvent();
+  let propose = new Propose(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  propose.parameters = new Array();
+  propose.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    BigInt.fromI32(0),
+    mockEvent.address,
+    null,
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    new Bytes(0)
+  );
+  propose.parameters.push(bigIntParam_('tokenId', tokenId));
+  propose.parameters.push(strParam_('metadata', metadata));
+  return propose;
 }
 
 export function _newMedia(newMedia: NewMedia): void {
@@ -476,4 +505,8 @@ export function _updateMedia(updateMedia: UpdateMedia): void {
 
 export function _acceptOffer(acceptOffer: AcceptOffer): void {
   handleAcceptOffer(acceptOffer);
+}
+
+export function _propose(propose: Propose): void {
+  handlePropose(propose);
 }

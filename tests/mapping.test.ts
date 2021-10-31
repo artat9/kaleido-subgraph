@@ -20,6 +20,7 @@ import {
   mockNewPeriod,
   mockNewSpace,
   mockOfferPeriod,
+  mockPropose,
   mockUpdateMedia,
   _acceptOffer,
   _bid,
@@ -30,6 +31,7 @@ import {
   _newPeriod,
   _newSpace,
   _offerPeriod,
+  _propose,
   _updateMedia,
 } from './mocks';
 import { Period } from '../src/generated/schema';
@@ -275,4 +277,24 @@ test('on update media', () => {
   assertMedia(contractAddress, 'owner', newEoa.toHexString());
   assertMedia(contractAddress, 'metadata', newMetadata);
   clearStore();
+});
+
+test('on propose', () => {
+  let tokenId = BigInt.fromI32(1);
+  _newPeriod(
+    mockNewPeriod(
+      tokenId,
+      meta_(),
+      meta_(),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
+    )
+  );
+  let meta = 'propose';
+  _propose(mockPropose(tokenId, meta));
+  assertPeriod(tokenId.toHexString(), 'proposedMetadata', meta);
 });
