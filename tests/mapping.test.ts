@@ -1,5 +1,6 @@
 import { clearStore, test, assert } from 'matchstick-as/assembly/index';
 import { BigInt } from '@graphprotocol/graph-ts';
+import { log } from 'matchstick-as/assembly/log';
 
 import {
   addressFromHexString,
@@ -10,6 +11,7 @@ import {
   assertOffer,
   assertPeriod,
   meta_,
+  mockAcceptOffer,
   mockBid,
   mockBuy,
   mockDeletePeriod,
@@ -19,6 +21,7 @@ import {
   mockNewSpace,
   mockOfferPeriod,
   mockUpdateMedia,
+  _acceptOffer,
   _bid,
   _buy,
   _deletePeriod,
@@ -54,15 +57,15 @@ test('on handleNewSpace', () => {
 });
 
 test('on handleNewPeriod', () => {
-  let tokenId = new BigInt(1);
+  let tokenId = BigInt.fromI32(1);
   let spaceMetadata = 'spaceMetadata';
   let tokenMetadata = 'tokenMetadata';
-  let saleStartTimestamp = new BigInt(100);
-  let saleEndTimestamp = new BigInt(101);
-  let displayStartTimestamp = new BigInt(200);
-  let displayEndTimestamp = new BigInt(201);
-  let pricing = new BigInt(0);
-  let minPrice = new BigInt(1000);
+  let saleStartTimestamp = BigInt.fromI32(100);
+  let saleEndTimestamp = BigInt.fromI32(101);
+  let displayStartTimestamp = BigInt.fromI32(200);
+  let displayEndTimestamp = BigInt.fromI32(201);
+  let pricing = BigInt.fromI32(0);
+  let minPrice = BigInt.fromI32(1000);
 
   _newPeriod(
     mockNewPeriod(
@@ -116,18 +119,18 @@ test('on deleteSpace', () => {
 });
 
 test('on deletePeriod', () => {
-  let tokenId = new BigInt(1);
+  let tokenId = BigInt.fromI32(1);
   _newPeriod(
     mockNewPeriod(
       tokenId,
       meta_(),
       meta_(),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0)
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
     )
   );
   _deletePeriod(mockDeletePeriod(tokenId));
@@ -136,25 +139,25 @@ test('on deletePeriod', () => {
 });
 
 test('on buy', () => {
-  let tokenId = new BigInt(1);
+  let tokenId = BigInt.fromI32(1);
   _newPeriod(
     mockNewPeriod(
       tokenId,
       meta_(),
       meta_(),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0)
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
     )
   );
-  let price = new BigInt(2);
+  let price = BigInt.fromI32(2);
   let address = addressFromHexString(
     '0x50414Ac6431279824df9968855181474c919a94B'
   );
-  let timestamp = new BigInt(3);
+  let timestamp = BigInt.fromI32(3);
   _buy(mockBuy(tokenId, price, address, timestamp));
   assertBuy(tokenId.toHexString(), 'id', tokenId.toHexString());
   // TODO: assert period
@@ -168,25 +171,25 @@ test('on buy', () => {
 });
 
 test('on bid', () => {
-  let tokenId = new BigInt(1);
+  let tokenId = BigInt.fromI32(1);
   _newPeriod(
     mockNewPeriod(
       tokenId,
       meta_(),
       meta_(),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0),
-      new BigInt(0)
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
     )
   );
-  let price = new BigInt(2);
+  let price = BigInt.fromI32(2);
   let address = addressFromHexString(
     '0x50414Ac6431279824df9968855181474c919a94B'
   );
-  let timestamp = new BigInt(3);
+  let timestamp = BigInt.fromI32(3);
   _bid(mockBid(tokenId, price, address, timestamp));
   assertBid(tokenId.toHexString(), 'id', tokenId.toHexString());
   // TODO: assert period
@@ -203,14 +206,14 @@ test('on bid', () => {
 
 test('on offer period', () => {
   // TODO: id
-  let id = 'tokenId';
+  let id = '0x1';
   let meta = meta_();
-  let start = new BigInt(2);
-  let end = new BigInt(3);
+  let start = BigInt.fromI32(2);
+  let end = BigInt.fromI32(3);
   let address = addressFromHexString(
     '0x50414Ac6431279824df9968855181474c919a94B'
   );
-  let price = new BigInt(100);
+  let price = BigInt.fromI32(100);
   _offerPeriod(mockOfferPeriod(meta, start, end, address, price));
   assertOffer(id, 'id', id);
   assertOffer(id, 'metadata', meta);
@@ -219,6 +222,44 @@ test('on offer period', () => {
   assertOffer(id, 'from', address.toHexString());
   assertOffer(id, 'price', price.toString());
   assertOffer(id, 'status', 'OFFERED');
+  clearStore();
+});
+
+test('on update media', () => {
+  let contractAddress = address_();
+  let saltNonce = BigInt.fromString('1234');
+  _newMedia(mockNewMedia(contractAddress, address_(), meta_(), saltNonce));
+  let newEoa = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let newMetadata = 'Afrer';
+  _updateMedia(mockUpdateMedia(contractAddress, newEoa, newMetadata));
+  assertMedia(contractAddress, 'owner', newEoa.toHexString());
+  assertMedia(contractAddress, 'metadata', newMetadata);
+  clearStore();
+});
+
+test('on accept offer', () => {
+  // TODO: id
+  let id = BigInt.fromI32(1);
+  log.info(id.toHexString(), []);
+  let meta = meta_();
+  let tokenMeta = 'tokenMeta';
+  let start = BigInt.fromI32(2);
+  let end = BigInt.fromI32(3);
+  let displayStart = BigInt.fromI32(4);
+  let displayEnd = BigInt.fromI32(5);
+  let address = addressFromHexString(
+    '0x50414Ac6431279824df9968855181474c919a94B'
+  );
+  let price = BigInt.fromI32(100);
+  _offerPeriod(mockOfferPeriod(meta, start, end, address, price));
+  _acceptOffer(
+    mockAcceptOffer(id, meta, tokenMeta, displayStart, displayEnd, price)
+  );
+  assertOffer(id.toHexString(), 'status', 'ACCEPTED');
+  assertPeriod(id.toHexString(), 'id', id.toHexString());
+
   clearStore();
 });
 

@@ -8,6 +8,7 @@ import {
   Bid,
   OfferPeriod,
   UpdateMedia,
+  AcceptOffer,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
 import { Media, Period, Space, Offer } from './generated/schema';
@@ -40,18 +41,43 @@ export function handleNewSpace(event: NewSpace): void {
 }
 
 export function handleNewPeriod(event: NewPeriod): void {
-  let period = new Period(toId(event.params.tokenId));
+  let params = event.params;
+  newPeriod(
+    params.tokenId,
+    params.displayStartTimestamp,
+    params.displayEndTimestamp,
+    params.minPrice,
+    pricing(params.pricing),
+    params.saleStartTimestamp,
+    params.saleEndTimestamp,
+    params.spaceMetadata,
+    params.tokenMetadata
+  );
+}
+
+function newPeriod(
+  tokenId: BigInt,
+  displayStartTimestamp: BigInt,
+  displayEndTimestamp: BigInt,
+  minPrice: BigInt,
+  pricing: string,
+  saleStartTimestamp: BigInt,
+  saleEndTimestamp: BigInt,
+  spaceMetadata: string,
+  tokenMetadata: string
+): void {
+  let period = new Period(toId(tokenId));
   period.deleted = false;
-  period.displayEndTimestamp = event.params.displayEndTimestamp;
-  period.displayStartTimestamp = event.params.displayStartTimestamp;
+  period.displayEndTimestamp = displayEndTimestamp;
+  period.displayStartTimestamp = displayStartTimestamp;
   // TODO: media
   //period.media = event.params.
-  period.minPrice = event.params.minPrice;
-  period.pricing = pricing(event.params.pricing);
-  period.saleEndTimestamp = event.params.saleEndTimestamp;
-  period.saleStartTimestamp = event.params.saleStartTimestamp;
-  period.space = event.params.spaceMetadata;
-  period.tokenMetadata = event.params.tokenMetadata;
+  period.minPrice = minPrice;
+  period.pricing = pricing;
+  period.saleEndTimestamp = saleEndTimestamp;
+  period.saleStartTimestamp = saleStartTimestamp;
+  period.space = spaceMetadata;
+  period.tokenMetadata = tokenMetadata;
   period.save();
 }
 
@@ -62,6 +88,27 @@ export function handleDeleteSpace(event: DeleteSpace): void {
   }
   space.deleted = true;
   space.save();
+}
+
+export function handleAcceptOffer(event: AcceptOffer): void {
+  let params = event.params;
+  let offer = loadOffer(event.params.tokenId);
+  if (!offer) {
+    return;
+  }
+  offer.status = 'ACCEPTED';
+  offer.save();
+  newPeriod(
+    params.tokenId,
+    params.displayStartTimestamp,
+    params.displayEndTimestamp,
+    params.price,
+    'OFFER',
+    event.block.timestamp,
+    event.block.timestamp,
+    params.spaceMetadata,
+    params.tokenMetadata
+  );
 }
 
 export function handleBuy(event: Buy): void {
@@ -81,7 +128,7 @@ export function handleBuy(event: Buy): void {
 
 export function handleOfferPeriod(event: OfferPeriod): void {
   // TODO: emit tokenID
-  let offer = new Offer('tokenId');
+  let offer = new Offer('0x1');
   offer.metadata = event.params.spaceMetadata;
   offer.space = event.params.spaceMetadata;
   offer.displayStartTimestamp = event.params.displayStartTimestamp;
@@ -137,6 +184,10 @@ let toId = (postId: BigInt): string => {
 
 let loadSpace = (metadata: string): Space | null => {
   return Space.load(metadata);
+};
+
+let loadOffer = (tokenId: BigInt): Offer | null => {
+  return Offer.load(toId(tokenId));
 };
 
 let loadPeriod = (tokenId: BigInt): Period | null => {

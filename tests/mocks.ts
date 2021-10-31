@@ -1,4 +1,7 @@
-import { UpdateMedia } from './../src/generated/EventEmitter/EventEmitter';
+import {
+  AcceptOffer,
+  UpdateMedia,
+} from './../src/generated/EventEmitter/EventEmitter';
 import { assert, newMockEvent } from 'matchstick-as/assembly/index';
 import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts';
 import {
@@ -12,6 +15,7 @@ import {
   OfferPeriod,
 } from '../src/generated/EventEmitter/EventEmitter';
 import {
+  handleAcceptOffer,
   handleBid,
   handleBuy,
   handleDeletePeriod,
@@ -114,14 +118,10 @@ export function mockNewMedia(
     new BigInt(0),
     new Bytes(0)
   );
-  let idParam = addressParam_('proxy', id);
-  let eoaParam = addressParam_('mediaEOA', from);
-  let metadataParam = strParam_('accountMetadata', metadata);
-  let saltNonceParam = bigIntParam_('saltNonce', saltNonce);
-  newMedia.parameters.push(idParam);
-  newMedia.parameters.push(eoaParam);
-  newMedia.parameters.push(metadataParam);
-  newMedia.parameters.push(saltNonceParam);
+  newMedia.parameters.push(addressParam_('proxy', id));
+  newMedia.parameters.push(addressParam_('mediaEOA', from));
+  newMedia.parameters.push(strParam_('accountMetadata', metadata));
+  newMedia.parameters.push(bigIntParam_('saltNonce', saltNonce));
   return newMedia;
 }
 
@@ -147,8 +147,7 @@ export function mockNewSpace(metadata: string): NewSpace {
     new BigInt(0),
     new Bytes(0)
   );
-  let metadataParam = strParam_('metadata', metadata);
-  newSpace.parameters.push(metadataParam);
+  newSpace.parameters.push(strParam_('metadata', metadata));
   return newSpace;
 }
 
@@ -184,36 +183,21 @@ export function mockNewPeriod(
     new BigInt(0),
     new Bytes(0)
   );
-  let tokenIdParam = bigIntParam_('tokenId', tokenId);
-  let spaceMetadataParam = strParam_('spaceMetadata', spaceMetadata);
-  let tokenMetadataParam = strParam_('tokenMetadata', tokenMetadata);
-  let saleStartTimestampParam = bigIntParam_(
-    'saleStartTimestamp',
-    saleStartTimestamp
+  newPeriod.parameters.push(bigIntParam_('tokenId', tokenId));
+  newPeriod.parameters.push(strParam_('spaceMetadata', spaceMetadata));
+  newPeriod.parameters.push(strParam_('tokenMetadata', tokenMetadata));
+  newPeriod.parameters.push(
+    bigIntParam_('saleStartTimestamp', saleStartTimestamp)
   );
-  let saleEndTimestampParam = bigIntParam_(
-    'saleEndTimestamp',
-    saleEndTimestamp
+  newPeriod.parameters.push(bigIntParam_('saleEndTimestamp', saleEndTimestamp));
+  newPeriod.parameters.push(
+    bigIntParam_('displayStartTimestamp', displayStartTimestamp)
   );
-  let displayStartTimestampParam = bigIntParam_(
-    'displayStartTimestamp',
-    displayStartTimestamp
+  newPeriod.parameters.push(
+    bigIntParam_('displayEndTimestamp', displayEndTimestamp)
   );
-  let displayEndTimestampParam = bigIntParam_(
-    'displayEndTimestamp',
-    displayEndTimestamp
-  );
-  let pricingParam = bigIntParam_('pricing', pricing);
-  let minPriceParam = bigIntParam_('minPrice', minPrice);
-  newPeriod.parameters.push(tokenIdParam);
-  newPeriod.parameters.push(spaceMetadataParam);
-  newPeriod.parameters.push(tokenMetadataParam);
-  newPeriod.parameters.push(saleStartTimestampParam);
-  newPeriod.parameters.push(saleEndTimestampParam);
-  newPeriod.parameters.push(displayStartTimestampParam);
-  newPeriod.parameters.push(displayEndTimestampParam);
-  newPeriod.parameters.push(pricingParam);
-  newPeriod.parameters.push(minPriceParam);
+  newPeriod.parameters.push(bigIntParam_('pricing', pricing));
+  newPeriod.parameters.push(bigIntParam_('minPrice', minPrice));
   return newPeriod;
 }
 
@@ -239,8 +223,7 @@ export function mockDeleteSpace(meta: string): DeleteSpace {
     new BigInt(0),
     new Bytes(0)
   );
-  let metaParam = strParam_('metadata', meta);
-  deleteSpace.parameters.push(metaParam);
+  deleteSpace.parameters.push(strParam_('metadata', meta));
   return deleteSpace;
 }
 
@@ -266,8 +249,7 @@ export function mockDeletePeriod(tokenId: BigInt): DeletePeriod {
     new BigInt(0),
     new Bytes(0)
   );
-  let tokenIdParam = bigIntParam_('tokenId', tokenId);
-  deletePeriod.parameters.push(tokenIdParam);
+  deletePeriod.parameters.push(bigIntParam_('tokenId', tokenId));
   return deletePeriod;
 }
 
@@ -298,14 +280,10 @@ export function mockBuy(
     new BigInt(0),
     new Bytes(0)
   );
-  let tokenIdParam = bigIntParam_('tokenId', tokenId);
-  let priceParam = bigIntParam_('price', price);
-  let buyerParam = addressParam_('buyer', buyer);
-  let timestampParam = bigIntParam_('timestamp', timestamp);
-  buy.parameters.push(tokenIdParam);
-  buy.parameters.push(priceParam);
-  buy.parameters.push(buyerParam);
-  buy.parameters.push(timestampParam);
+  buy.parameters.push(bigIntParam_('tokenId', tokenId));
+  buy.parameters.push(bigIntParam_('price', price));
+  buy.parameters.push(addressParam_('buyer', buyer));
+  buy.parameters.push(bigIntParam_('timestamp', timestamp));
   return buy;
 }
 
@@ -336,14 +314,10 @@ export function mockBid(
     new BigInt(0),
     new Bytes(0)
   );
-  let tokenIdParam = bigIntParam_('tokenId', tokenId);
-  let priceParam = bigIntParam_('price', price);
-  let buyerParam = addressParam_('buyer', buyer);
-  let timestampParam = bigIntParam_('timestamp', timestamp);
-  bid.parameters.push(tokenIdParam);
-  bid.parameters.push(priceParam);
-  bid.parameters.push(buyerParam);
-  bid.parameters.push(timestampParam);
+  bid.parameters.push(bigIntParam_('tokenId', tokenId));
+  bid.parameters.push(bigIntParam_('price', price));
+  bid.parameters.push(addressParam_('buyer', buyer));
+  bid.parameters.push(bigIntParam_('timestamp', timestamp));
   return bid;
 }
 
@@ -375,22 +349,15 @@ export function mockOfferPeriod(
     new BigInt(0),
     new Bytes(0)
   );
-  let metadataParam = strParam_('spaceMetadata', metadata);
-  let displayStartTimestampParam = bigIntParam_(
-    'displayStartTimestamp',
-    displayStartTimestamp
+  offer.parameters.push(strParam_('spaceMetadata', metadata));
+  offer.parameters.push(
+    bigIntParam_('displayStartTimestamp', displayStartTimestamp)
   );
-  let displayEndTimestampParam = bigIntParam_(
-    'displayEndTimestamp',
-    displayEndTimestamp
+  offer.parameters.push(
+    bigIntParam_('displayEndTimestamp', displayEndTimestamp)
   );
-  let senderParam = addressParam_('sender', from);
-  let priceParam = bigIntParam_('price', price);
-  offer.parameters.push(metadataParam);
-  offer.parameters.push(displayStartTimestampParam);
-  offer.parameters.push(displayEndTimestampParam);
-  offer.parameters.push(senderParam);
-  offer.parameters.push(priceParam);
+  offer.parameters.push(addressParam_('sender', from));
+  offer.parameters.push(bigIntParam_('price', price));
   return offer;
 }
 
@@ -429,6 +396,48 @@ export function mockUpdateMedia(
   return updateMedia;
 }
 
+export function mockAcceptOffer(
+  tokenId: BigInt,
+  spaceMetadata: string,
+  tokenMetadata: string,
+  displayStartTimestamp: BigInt,
+  displayEndTimestamp: BigInt,
+  price: BigInt
+): AcceptOffer {
+  let mockEvent = newMockEvent();
+  let acceptOffer = new AcceptOffer(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  acceptOffer.parameters = new Array();
+  acceptOffer.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    new BigInt(0),
+    mockEvent.address,
+    null,
+    new BigInt(0),
+    new BigInt(0),
+    new BigInt(0),
+    new Bytes(0)
+  );
+  acceptOffer.parameters.push(bigIntParam_('tokenId', tokenId));
+  acceptOffer.parameters.push(strParam_('spaceMetadata', spaceMetadata));
+  acceptOffer.parameters.push(strParam_('tokenMetadata', tokenMetadata));
+  acceptOffer.parameters.push(
+    bigIntParam_('displayStartTimestamp', displayStartTimestamp)
+  );
+  acceptOffer.parameters.push(
+    bigIntParam_('displayEndTimestamp', displayEndTimestamp)
+  );
+  acceptOffer.parameters.push(bigIntParam_('price', price));
+  return acceptOffer;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -463,4 +472,8 @@ export function _offerPeriod(offer: OfferPeriod): void {
 
 export function _updateMedia(updateMedia: UpdateMedia): void {
   handleUpdateMedia(updateMedia);
+}
+
+export function _acceptOffer(acceptOffer: AcceptOffer): void {
+  handleAcceptOffer(acceptOffer);
 }

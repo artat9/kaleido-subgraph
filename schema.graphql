@@ -43,6 +43,7 @@ type Period @entity {
   buy: Buy
   bidding: Bid
   bids: [Bid!] @derivedFrom(field: "period")
+  advertiser: Bytes
   deleted: Boolean!
 }
 
