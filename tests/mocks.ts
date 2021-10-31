@@ -1,6 +1,7 @@
 import {
   AcceptOffer,
   AcceptProposal,
+  DenyProposal,
   Propose,
   UpdateMedia,
 } from './../src/generated/EventEmitter/EventEmitter';
@@ -23,6 +24,7 @@ import {
   handleBuy,
   handleDeletePeriod,
   handleDeleteSpace,
+  handleDenyProposal,
   handleNewMedia,
   handleNewPeriod,
   handleNewSpace,
@@ -37,6 +39,14 @@ export function assertMedia(id: Address, key: string, want: string): void {
 
 export function assertPeriod(id: string, key: string, want: string): void {
   assertEquals('Period', id, key, want);
+}
+
+export function assertDeniedProposal(
+  id: string,
+  key: string,
+  want: string
+): void {
+  assertEquals('DeniedProposal', id, key, want);
 }
 
 export function assertBuy(id: string, key: string, want: string): void {
@@ -499,6 +509,38 @@ export function mockAcceptProposal(
   return propose;
 }
 
+export function mockDenyProposal(
+  tokenId: BigInt,
+  metadata: string,
+  reason: string
+): DenyProposal {
+  let mockEvent = newMockEvent();
+  let propose = new DenyProposal(
+    mockEvent.address,
+    mockEvent.logIndex,
+    mockEvent.transactionLogIndex,
+    mockEvent.logType,
+    mockEvent.block,
+    mockEvent.transaction,
+    mockEvent.parameters
+  );
+  propose.parameters = new Array();
+  propose.transaction = new ethereum.Transaction(
+    new Bytes(0),
+    BigInt.fromI32(0),
+    mockEvent.address,
+    null,
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    BigInt.fromI32(0),
+    new Bytes(0)
+  );
+  propose.parameters.push(bigIntParam_('tokenId', tokenId));
+  propose.parameters.push(strParam_('metadata', metadata));
+  propose.parameters.push(strParam_('reason', reason));
+  return propose;
+}
+
 export function _newMedia(newMedia: NewMedia): void {
   handleNewMedia(newMedia);
 }
@@ -545,4 +587,8 @@ export function _propose(propose: Propose): void {
 
 export function _acceptProposal(acceptProposal: AcceptProposal): void {
   handleAcceptProposal(acceptProposal);
+}
+
+export function _denyProposal(denyProposal: DenyProposal): void {
+  handleDenyProposal(denyProposal);
 }

@@ -11,9 +11,16 @@ import {
   AcceptOffer,
   Propose,
   AcceptProposal,
+  DenyProposal,
 } from './generated/EventEmitter/EventEmitter';
 import { Address, BigInt } from '@graphprotocol/graph-ts';
-import { Media, Period, Space, Offer } from './generated/schema';
+import {
+  Media,
+  Period,
+  Space,
+  Offer,
+  DeniedProposal,
+} from './generated/schema';
 import * as schema from './generated/schema';
 
 export function handleNewMedia(event: NewMedia): void {
@@ -181,6 +188,13 @@ export function handleAcceptProposal(event: AcceptProposal): void {
   }
   period.proposalAccepted = true;
   period.save();
+}
+
+export function handleDenyProposal(event: DenyProposal): void {
+  let denied = new DeniedProposal(event.params.metadata);
+  denied.period = event.params.tokenId.toHexString();
+  denied.reason = event.params.reason;
+  denied.save();
 }
 
 function pricing(val: i32): string {

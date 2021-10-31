@@ -46,9 +46,16 @@ type Period @entity {
   advertiser: Bytes
   proposedMetadata: String
   proposalAccepted: Boolean!
+  deniedProposals: [DeniedProposal!]
   deleted: Boolean!
 }
 
+type DeniedProposal @entity {
+  ## id: proposedMetadata
+  id: ID!
+  period: Period!
+  reason: String!
+}
 
 type Buy @entity {
   id: ID!

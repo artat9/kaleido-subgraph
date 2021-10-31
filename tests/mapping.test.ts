@@ -7,6 +7,7 @@ import {
   address_,
   assertBid,
   assertBuy,
+  assertDeniedProposal,
   assertMedia,
   assertOffer,
   assertPeriod,
@@ -17,6 +18,7 @@ import {
   mockBuy,
   mockDeletePeriod,
   mockDeleteSpace,
+  mockDenyProposal,
   mockNewMedia,
   mockNewPeriod,
   mockNewSpace,
@@ -29,6 +31,7 @@ import {
   _buy,
   _deletePeriod,
   _deleteSpace,
+  _denyProposal,
   _newMedia,
   _newPeriod,
   _newSpace,
@@ -321,4 +324,27 @@ test('on accept proposal', () => {
   _propose(mockPropose(tokenId, meta));
   _acceptProposal(mockAcceptProposal(tokenId, meta));
   assertPeriod(tokenId.toHexString(), 'proposalAccepted', 'true');
+});
+
+test('on deny proposal', () => {
+  let tokenId = BigInt.fromI32(1);
+  _newPeriod(
+    mockNewPeriod(
+      tokenId,
+      meta_(),
+      meta_(),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0),
+      BigInt.fromI32(0)
+    )
+  );
+  let meta = 'propose';
+  let reason = 'bad content';
+  _propose(mockPropose(tokenId, meta));
+  _denyProposal(mockDenyProposal(tokenId, meta, reason));
+  assertDeniedProposal(meta, 'id', meta);
+  assertDeniedProposal(meta, 'reason', reason);
 });
