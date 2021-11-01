@@ -336,6 +336,7 @@ export function mockBid(
 }
 
 export function mockOfferPeriod(
+  tokenId: BigInt,
   metadata: string,
   displayStartTimestamp: BigInt,
   displayEndTimestamp: BigInt,
@@ -363,6 +364,7 @@ export function mockOfferPeriod(
     BigInt.fromI32(0),
     new Bytes(0)
   );
+  offer.parameters.push(bigIntParam_('tokenId', tokenId));
   offer.parameters.push(strParam_('spaceMetadata', metadata));
   offer.parameters.push(
     bigIntParam_('displayStartTimestamp', displayStartTimestamp)

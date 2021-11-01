@@ -213,7 +213,7 @@ test('on bid', () => {
 
 test('on offer period', () => {
   // TODO: id
-  let id = '0x1';
+  let id = BigInt.fromI32(1);
   let meta = meta_();
   let start = BigInt.fromI32(2);
   let end = BigInt.fromI32(3);
@@ -221,14 +221,14 @@ test('on offer period', () => {
     '0x50414Ac6431279824df9968855181474c919a94B'
   );
   let price = BigInt.fromI32(100);
-  _offerPeriod(mockOfferPeriod(meta, start, end, address, price));
-  assertOffer(id, 'id', id);
-  assertOffer(id, 'metadata', meta);
-  assertOffer(id, 'displayStartTimestamp', start.toString());
-  assertOffer(id, 'displayEndTimestamp', end.toString());
-  assertOffer(id, 'from', address.toHexString());
-  assertOffer(id, 'price', price.toString());
-  assertOffer(id, 'status', 'OFFERED');
+  _offerPeriod(mockOfferPeriod(id, meta, start, end, address, price));
+  assertOffer(id.toHexString(), 'id', id.toHexString());
+  assertOffer(id.toHexString(), 'metadata', meta);
+  assertOffer(id.toHexString(), 'displayStartTimestamp', start.toString());
+  assertOffer(id.toHexString(), 'displayEndTimestamp', end.toString());
+  assertOffer(id.toHexString(), 'from', address.toHexString());
+  assertOffer(id.toHexString(), 'price', price.toString());
+  assertOffer(id.toHexString(), 'status', 'OFFERED');
   clearStore();
 });
 
@@ -260,7 +260,7 @@ test('on accept offer', () => {
     '0x50414Ac6431279824df9968855181474c919a94B'
   );
   let price = BigInt.fromI32(100);
-  _offerPeriod(mockOfferPeriod(meta, start, end, address, price));
+  _offerPeriod(mockOfferPeriod(id, meta, start, end, address, price));
   _acceptOffer(
     mockAcceptOffer(id, meta, tokenMeta, displayStart, displayEnd, price)
   );

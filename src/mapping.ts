@@ -138,8 +138,7 @@ export function handleBuy(event: Buy): void {
 }
 
 export function handleOfferPeriod(event: OfferPeriod): void {
-  // TODO: emit tokenID
-  let offer = new Offer('0x1');
+  let offer = new Offer(toId(event.params.tokenId));
   offer.metadata = event.params.spaceMetadata;
   offer.space = event.params.spaceMetadata;
   offer.displayStartTimestamp = event.params.displayStartTimestamp;

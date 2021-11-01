@@ -35,7 +35,7 @@
         handler: handleNewPeriod
       - event: NewSpace(string)
         handler: handleNewSpace
-      - event: OfferPeriod(string,uint256,uint256,address,uint256)
+      - event: OfferPeriod(uint256,string,uint256,uint256,address,uint256)
         handler: handleOfferPeriod
       - event: Propose(uint256,string)
         handler: handlePropose
