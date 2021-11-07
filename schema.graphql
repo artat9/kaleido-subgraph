@@ -74,6 +74,7 @@ type Bid @entity {
   period: Period!
   buyer: Bytes!
   timestamp: BigInt!
+  price: BigInt!
 }
 
 type Offer @entity {

@@ -156,10 +156,18 @@ export function handleBid(event: Bid): void {
   if (!period) {
     return;
   }
+  let prevBidId = period.bidding;
+  if (prevBidId) {
+    let prevBid = schema.Bid.load(prevBidId);
+    if (prevBid) {
+      addCirculation(prevBid.price.neg());
+    }
+  }
   let bid = new schema.Bid(spaceId);
   bid.buyer = event.params.buyer;
   bid.period = period.id;
   bid.timestamp = event.params.timestamp;
+  bid.price = event.params.price;
   bid.save();
   period.bidding = bid.id;
   period.save();
